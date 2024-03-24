@@ -1,0 +1,66 @@
+<div *ngIf="isQuerying">
+  <mat-progress-bar mode="query"></mat-progress-bar>
+</div>
+<section class="grid justify-center">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="w-80 mt-24">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title
+          ><span class="text-3xl font-bold">KPI-Plus</span></mat-card-title
+        >
+        <mat-card-subtitle>Login to your account</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <br />
+        <div class="row">
+          <div class="col">
+            <mat-form-field class="w-full">
+              <mat-label>Enter your email</mat-label>
+              <input
+                required
+                matInput
+                placeholder="juan@example.com"
+                formControlName="email"
+                type="email"
+              />
+              <mat-icon matSuffix>email</mat-icon>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-full">
+              <mat-label>Enter your password</mat-label>
+              <input
+                matInput
+                [type]="hide ? 'password' : 'text'"
+                formControlName="password"
+              />
+              <button
+                type="button"
+                mat-icon-button
+                matSuffix
+                (click)="hide = !hide"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide"
+              >
+                <mat-icon>{{
+                  hide ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="w-full"
+          [disabled]="isQuerying || loginForm.invalid"
+        >
+          Login
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </form>
+</section>
