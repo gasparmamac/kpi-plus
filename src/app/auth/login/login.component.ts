@@ -61,7 +61,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       if (error) {
         this._snackbar.open(error, 'close', { duration: 10000 });
       }
-      this.loginForm.reset();
     });
   }
 
@@ -76,4 +75,4 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 }
 
-// Todo : dashboard, routing, dispatch form
+// Todo : dashboard, routing, route guard, dispatch form
