@@ -1,0 +1,11 @@
+.page-not-found {
+  text-align: center;
+}
+
+.page-not-found h1 {
+  font-size: 5em;
+}
+
+.page-not-found p {
+  font-size: 2em;
+}

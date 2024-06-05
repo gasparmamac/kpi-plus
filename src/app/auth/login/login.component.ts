@@ -74,5 +74,3 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.authService.signin(email, password);
   }
 }
-
-// Todo : dashboard, routing, route guard, dispatch form

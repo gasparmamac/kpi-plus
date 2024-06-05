@@ -6,14 +6,18 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import {
+  connectFirestoreEmulator,
+  getFirestore,
+  provideFirestore,
+} from '@angular/fire/firestore';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideClientHydration(),
     provideAnimationsAsync(),
-    provideAnimationsAsync(),
+
     importProvidersFrom(
       provideFirebaseApp(() =>
         initializeApp({
@@ -35,6 +39,12 @@ export const appConfig: ApplicationConfig = {
         return auth;
       })
     ),
-    importProvidersFrom(provideFirestore(() => getFirestore())),
+    importProvidersFrom(
+      provideFirestore(() => {
+        const db = getFirestore();
+        connectFirestoreEmulator(db, 'localhost', 8080);
+        return db;
+      })
+    ),
   ],
 };

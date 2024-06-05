@@ -1,0 +1,22 @@
+<form [formGroup]="filterForm" novalidate (ngSubmit)="onApply()">
+  <div class="flex gap-5">
+    <mat-form-field class="full-width">
+      <mat-select placeholder="Select query..." formControlName="filterValue">
+        @for (state of filterOptions; track state) {
+        <mat-option [value]="state.abbreviation">{{ state.name }}</mat-option>
+        }
+      </mat-select>
+      @if (filterForm.controls['filterValue'].hasError('required')) {
+      <mat-error>Query selection is <strong>required</strong></mat-error>
+      }
+    </mat-form-field>
+    <button
+      [disabled]="filterForm.controls.filterValue.hasError('required')"
+      mat-raised-button
+      color="primary"
+      type="submit"
+    >
+      Apply
+    </button>
+  </div>
+</form>
