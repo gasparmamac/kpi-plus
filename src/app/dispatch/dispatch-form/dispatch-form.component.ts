@@ -1,12 +1,40 @@
-import { Component, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+  input,
+} from '@angular/core';
 
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  FormGroup,
+} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatCardModule } from '@angular/material/card';
-
+import {
+  MatStepper,
+  MatStepperModule,
+  StepperOrientation,
+} from '@angular/material/stepper';
+import { MatDialog } from '@angular/material/dialog';
+import { Router, RouterModule } from '@angular/router';
+import { DispatchFormDialogComponent } from './dispatch-form-dialog/dispatch-form-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { CommonModule } from '@angular/common';
+import { MatDividerModule } from '@angular/material/divider';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { Observable, Subscription, map } from 'rxjs';
+import { DispatchService } from '../dispatch.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-dispatch-form',
@@ -14,95 +42,191 @@ import { MatCardModule } from '@angular/material/card';
   styleUrl: './dispatch-form.component.css',
   standalone: true,
   imports: [
+    CommonModule,
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
     MatRadioModule,
-    MatCardModule,
-    ReactiveFormsModule
-  ]
+    MatStepperModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatDividerModule,
+    MatProgressBarModule,
+    ReactiveFormsModule,
+    RouterModule,
+  ],
 })
-export class DispatchFormComponent {
-  private fb = inject(FormBuilder);
-  addressForm = this.fb.group({
-    company: null,
-    firstName: [null, Validators.required],
-    lastName: [null, Validators.required],
-    address: [null, Validators.required],
-    address2: null,
-    city: [null, Validators.required],
-    state: [null, Validators.required],
-    postalCode: [null, Validators.compose([
-      Validators.required, Validators.minLength(5), Validators.maxLength(5)])
-    ],
-    shipping: ['free', Validators.required]
-  });
+export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
+  @Input() formMode = '';
+  dispatchForm!: FormGroup;
+  deliveryUnitForm!: FormGroup;
+  invoiceForm!: FormGroup;
+  payrollForm!: FormGroup;
+  orForm!: FormGroup;
+  stepperOrientation!: Observable<'horizontal' | 'vertical'>;
 
-  hasUnitNumber = false;
+  loadingSubscription = new Subscription();
+  loading = false;
+  completed = false;
 
-  states = [
-    {name: 'Alabama', abbreviation: 'AL'},
-    {name: 'Alaska', abbreviation: 'AK'},
-    {name: 'American Samoa', abbreviation: 'AS'},
-    {name: 'Arizona', abbreviation: 'AZ'},
-    {name: 'Arkansas', abbreviation: 'AR'},
-    {name: 'California', abbreviation: 'CA'},
-    {name: 'Colorado', abbreviation: 'CO'},
-    {name: 'Connecticut', abbreviation: 'CT'},
-    {name: 'Delaware', abbreviation: 'DE'},
-    {name: 'District Of Columbia', abbreviation: 'DC'},
-    {name: 'Federated States Of Micronesia', abbreviation: 'FM'},
-    {name: 'Florida', abbreviation: 'FL'},
-    {name: 'Georgia', abbreviation: 'GA'},
-    {name: 'Guam', abbreviation: 'GU'},
-    {name: 'Hawaii', abbreviation: 'HI'},
-    {name: 'Idaho', abbreviation: 'ID'},
-    {name: 'Illinois', abbreviation: 'IL'},
-    {name: 'Indiana', abbreviation: 'IN'},
-    {name: 'Iowa', abbreviation: 'IA'},
-    {name: 'Kansas', abbreviation: 'KS'},
-    {name: 'Kentucky', abbreviation: 'KY'},
-    {name: 'Louisiana', abbreviation: 'LA'},
-    {name: 'Maine', abbreviation: 'ME'},
-    {name: 'Marshall Islands', abbreviation: 'MH'},
-    {name: 'Maryland', abbreviation: 'MD'},
-    {name: 'Massachusetts', abbreviation: 'MA'},
-    {name: 'Michigan', abbreviation: 'MI'},
-    {name: 'Minnesota', abbreviation: 'MN'},
-    {name: 'Mississippi', abbreviation: 'MS'},
-    {name: 'Missouri', abbreviation: 'MO'},
-    {name: 'Montana', abbreviation: 'MT'},
-    {name: 'Nebraska', abbreviation: 'NE'},
-    {name: 'Nevada', abbreviation: 'NV'},
-    {name: 'New Hampshire', abbreviation: 'NH'},
-    {name: 'New Jersey', abbreviation: 'NJ'},
-    {name: 'New Mexico', abbreviation: 'NM'},
-    {name: 'New York', abbreviation: 'NY'},
-    {name: 'North Carolina', abbreviation: 'NC'},
-    {name: 'North Dakota', abbreviation: 'ND'},
-    {name: 'Northern Mariana Islands', abbreviation: 'MP'},
-    {name: 'Ohio', abbreviation: 'OH'},
-    {name: 'Oklahoma', abbreviation: 'OK'},
-    {name: 'Oregon', abbreviation: 'OR'},
-    {name: 'Palau', abbreviation: 'PW'},
-    {name: 'Pennsylvania', abbreviation: 'PA'},
-    {name: 'Puerto Rico', abbreviation: 'PR'},
-    {name: 'Rhode Island', abbreviation: 'RI'},
-    {name: 'South Carolina', abbreviation: 'SC'},
-    {name: 'South Dakota', abbreviation: 'SD'},
-    {name: 'Tennessee', abbreviation: 'TN'},
-    {name: 'Texas', abbreviation: 'TX'},
-    {name: 'Utah', abbreviation: 'UT'},
-    {name: 'Vermont', abbreviation: 'VT'},
-    {name: 'Virgin Islands', abbreviation: 'VI'},
-    {name: 'Virginia', abbreviation: 'VA'},
-    {name: 'Washington', abbreviation: 'WA'},
-    {name: 'West Virginia', abbreviation: 'WV'},
-    {name: 'Wisconsin', abbreviation: 'WI'},
-    {name: 'Wyoming', abbreviation: 'WY'}
+  @ViewChild('stepper')
+  private dispatchStepper!: MatStepper;
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private dispatchService: DispatchService,
+    public dialog: MatDialog,
+    public breakpointObserver: BreakpointObserver
+  ) {}
+
+  ngAfterViewInit(): void {}
+  ngOnDestroy(): void {
+    if (this.loadingSubscription) this.loadingSubscription.unsubscribe();
+  }
+
+  ngOnInit(): void {
+    this.loadingSubscription = this.dispatchService.loading$.subscribe(
+      (loadingStatus) => {
+        this.loading = loadingStatus;
+        this.completed = loadingStatus!;
+      }
+    );
+
+    this.stepperOrientation = this.breakpointObserver
+      .observe('(min-width: 800px)')
+      .pipe(map(({ matches }) => (matches ? 'horizontal' : 'vertical')));
+
+    this.dispatchForm = this.fb.group({
+      disp_date: [null, Validators.required],
+      disp_slip: [null, Validators.required],
+      route: [null, Validators.required],
+      odz_route: null,
+      destination: [null, Validators.required],
+      cbm: [4.5, Validators.required],
+      drops: [null, Validators.required],
+      qty: [null, Validators.required],
+    });
+    this.deliveryUnitForm = this.fb.group({
+      plate_no: [null, Validators.required],
+      backup_plate_no: null,
+      driver: [null, Validators.required],
+      extra_driver: null,
+      helper: [null, Validators.required],
+      extra_helper: null,
+      odo_end: [0, Validators.required],
+      odo_start: [0, Validators.required],
+    });
+    this.invoiceForm = this.fb.group({
+      wd_type: [null, Validators.required],
+      disp_rate: [
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(4),
+        ]),
+      ],
+      inv_date: null,
+      inv_no: null,
+    });
+    this.payrollForm = this.fb.group({
+      payroll_date: null,
+      payroll_no: null,
+    });
+    this.orForm = this.fb.group({
+      or_date: null,
+      or_no: null,
+    });
+  }
+
+  wd_types = [
+    { name: 'Normal', abbreviation: 'normal' },
+    { name: 'Special holiday', abbreviation: 'sp_hol' },
+    { name: 'Holiday', abbreviation: 'hol' },
+    { name: 'Restday', abbreviation: 'rd' },
+  ];
+
+  routes = [
+    { name: 'Downtown Davao', abbreviation: 'downtown davao' },
+    { name: 'Calinan', abbreviation: 'calinan' },
+    { name: 'Toril', abbreviation: 'toril' },
+    { name: 'Outside delivery zone (ODZ)', abbreviation: 'odz' },
+  ];
+  drivers = [
+    { name: 'driver1', abbreviation: 'd1' },
+    { name: 'driver2', abbreviation: 'd2' },
+    { name: 'driver3', abbreviation: 'd3' },
+    { name: 'Extra', abbreviation: 'extra' },
+  ];
+
+  helpers = [
+    { name: 'helper1', abbreviation: 'h1' },
+    { name: 'helper2', abbreviation: 'h2' },
+    { name: 'helper3', abbreviation: 'h3' },
+    { name: 'Extra', abbreviation: 'extra' },
+  ];
+
+  plate_nos = [
+    { name: 'lwd262', abbreviation: 'lwd262' },
+    { name: 'ykv852', abbreviation: 'ykv852' },
+    { name: 'mdk745', abbreviation: 'mdk745' },
+    { name: 'lms946', abbreviation: 'lms946' },
+    { name: 'BACKUP', abbreviation: 'backup' },
   ];
 
   onSubmit(): void {
-    alert('Thanks!');
+    // alert('Thanks!');
+    // const dispatchItem = this.dispatchForm.value;
+    // console.log(dispatchItem);
+  }
+
+  onCancel() {
+    console.log('cancelled');
+    this.router.navigate(['/menu/dispatch/table']);
+  }
+
+  openDialog(
+    enterAnimationDuration: string,
+    exitAnimationDuration: string
+  ): void {
+    this.dialog.open(DispatchFormDialogComponent, {
+      width: '250px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: {
+        ...this.dispatchForm.value,
+        ...this.deliveryUnitForm.value,
+        ...this.invoiceForm.value,
+        ...this.payrollForm.value,
+        ...this.orForm.value,
+      },
+    });
+  }
+
+  get dispatchFormControls() {
+    return Object.keys(this.dispatchForm.controls).map((key) => ({
+      key,
+      control: this.dispatchForm.get(key),
+    }));
+  }
+
+  get deliveryUnitFormControls() {
+    return Object.keys(this.deliveryUnitForm.controls).map((key) => ({
+      key,
+      control: this.deliveryUnitForm.get(key),
+    }));
+  }
+
+  onContinue() {
+    const formValues = {
+      ...this.dispatchForm.value,
+      ...this.deliveryUnitForm.value,
+      ...this.invoiceForm.value,
+      ...this.payrollForm.value,
+      ...this.orForm.value,
+    };
+    this.dispatchService.addDispatchItem(formValues);
+    this.dispatchStepper.next();
   }
 }

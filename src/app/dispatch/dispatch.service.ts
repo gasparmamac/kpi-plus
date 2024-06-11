@@ -45,4 +45,19 @@ export class DispatchService {
       console.log('Error occured in fetching dispatch items: ', error);
     }
   }
+
+  async addDispatchItem(data: DispatchModel) {
+    this.loadingSubject.next(true);
+    try {
+      const createDocResponse = await this.firestoreService.createDoc(
+        'dispatch',
+        data
+      );
+      console.log('Create doc response: ', createDocResponse);
+      this.loadingSubject.next(false);
+    } catch (error) {
+      this.loadingSubject.next(false);
+      console.log('Error in adding dispatch item: ', error);
+    }
+  }
 }

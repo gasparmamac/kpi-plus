@@ -4,13 +4,8 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import {
-  MatTableModule,
-  MatTable,
-  MatTableDataSource,
-} from '@angular/material/table';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 
@@ -26,6 +21,7 @@ import { DispatchService } from '../dispatch.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dispatch-table',
@@ -85,7 +81,8 @@ export class DispatchTableComponent
 
   constructor(
     private fb: FormBuilder,
-    private dispatchService: DispatchService
+    private dispatchService: DispatchService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {}
@@ -102,7 +99,6 @@ export class DispatchTableComponent
     this.dataSource.paginator = this.paginator;
     this.dataSubscription = this.dispatchService.dispatchItems$.subscribe(
       (data) => {
-        console.log(data);
         this.dataSource.data = data;
       }
     );
@@ -112,7 +108,10 @@ export class DispatchTableComponent
     const searchValue = ($event.target as HTMLInputElement).value
       .trim()
       .toLowerCase();
-    console.log(searchValue);
     this.dataSource.filter = searchValue;
+  }
+
+  onAdd() {
+    this.router.navigate(['/menu/dispatch/add']);
   }
 }

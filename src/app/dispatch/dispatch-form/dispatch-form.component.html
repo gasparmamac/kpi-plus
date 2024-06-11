@@ -1,99 +1,448 @@
-<form [formGroup]="addressForm" novalidate (ngSubmit)="onSubmit()">
-  <mat-card class="shipping-card">
-    <mat-card-header>
-      <mat-card-title>Shipping Information</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="Company" formControlName="company">
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="First name" formControlName="firstName">
-            @if (addressForm.controls['firstName'].hasError('required')) {
-              <mat-error>First name is <strong>required</strong></mat-error>
-            }
-          </mat-form-field>
-        </div>
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="Last name" formControlName="lastName">
-            @if (addressForm.controls['lastName'].hasError('required')) {
-              <mat-error>Last name is <strong>required</strong></mat-error>
-            }
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <textarea matInput placeholder="Address" formControlName="address"></textarea>
-            @if (addressForm.controls['address'].hasError('required')) {
-              <mat-error>Address is <strong>required</strong></mat-error>
-            }
-          </mat-form-field>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          @if (hasUnitNumber) {
-            <mat-form-field class="full-width">
-              <textarea matInput placeholder="Address 2" formControlName="address2"></textarea>
-            </mat-form-field>
-          } @else {
-            <button mat-button type="button" (click)="hasUnitNumber = !hasUnitNumber">
-              + Add C/O, Apt, Suite, Unit
-            </button>
+<ng-container *ngIf="formMode == 'add'">
+  <mat-stepper #stepper [orientation]="(stepperOrientation | async)!" linear>
+    <mat-step [stepControl]="dispatchForm">
+      <form [formGroup]="dispatchForm" class="">
+        <ng-template matStepLabel>Enter Dispatch Details</ng-template>
+
+        <!-- disp date -->
+        <mat-form-field class="w-full">
+          <mat-label>Dispatch date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            placeholder="MM/DD/YYYY"
+            formControlName="disp_date"
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          @if (dispatchForm.controls['disp_date'].hasError('required')) {
+          <mat-error>Dispatch date is <strong>required</strong></mat-error>
           }
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput placeholder="City" formControlName="city">
-            @if (addressForm.controls['city'].hasError('required')) {
-              <mat-error>City is <strong>required</strong></mat-error>
+        </mat-form-field>
+        <!-- disp Disp_slip -->
+        <mat-form-field class="w-full">
+          <mat-label>Dispatch slip no.</mat-label>
+          <input
+            matInput
+            placeholder="ex.0158956"
+            formControlName="disp_slip"
+          />
+          @if (dispatchForm.controls['disp_slip'].hasError('required')) {
+          <mat-error>Dispatch slip is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+
+        <!-- route -->
+        <mat-form-field class="w-full">
+          <mat-label>Route</mat-label>
+          <mat-select formControlName="route">
+            @for (state of routes; track state) {
+            <mat-option [value]="state.abbreviation">{{
+              state.name
+            }}</mat-option>
             }
-          </mat-form-field>
-        </div>
-        <div class="col">
-          <mat-form-field class="full-width">
-            <mat-select placeholder="State" formControlName="state">
-              @for (state of states; track state) {
-                <mat-option [value]="state.abbreviation">{{ state.name }}</mat-option>
-              }
-            </mat-select>
-            @if (addressForm.controls['state'].hasError('required')) {
-              <mat-error>State is <strong>required</strong></mat-error>
+          </mat-select>
+          @if (dispatchForm.controls['route'].hasError('required')) {
+          <mat-error>Route is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- odz route -->
+        @if(dispatchForm.controls['route'].value == 'odz'){
+        <mat-form-field class="w-full">
+          <mat-label>ODZ route</mat-label>
+          <input
+            matInput
+            placeholder="ex. Panabo, Cagayan etc."
+            formControlName="odz_route"
+          />
+          @if (dispatchForm.controls['odz_route'].hasError('required')) {
+          <mat-error>ODZ Route is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        }
+        <!-- destination -->
+        <mat-form-field class="w-full">
+          <mat-label>Destination</mat-label>
+          <input
+            matInput
+            placeholder="ex. Matina, Maa, Ecoland etc."
+            formControlName="destination"
+          />
+          @if (dispatchForm.controls['destination'].hasError('required')) {
+          <mat-error>Destination is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- cbm -->
+        <mat-form-field class="w-full">
+          <mat-label>CBM</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="cbm"
+            placeholder="ex. 4.5"
+          />
+          @if (dispatchForm.controls['cbm'].hasError('required')) {
+          <mat-error>CBM is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- drops -->
+        <mat-form-field class="w-full">
+          <mat-label>Drops</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="drops"
+            placeholder="ex. 45"
+          />
+          @if (dispatchForm.controls['drops'].hasError('required')) {
+          <mat-error>Drops is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- Qty -->
+        <mat-form-field class="w-full">
+          <mat-label>Quantity</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="qty"
+            placeholder="ex. 50"
+          />
+          @if (dispatchForm.controls['qty'].hasError('required')) {
+          <mat-error>Quantity is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <button mat-button color="primary" matStepperNext>Next</button>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="deliveryUnitForm">
+      <form [formGroup]="deliveryUnitForm" class="">
+        <ng-template matStepLabel>Enter Courier Details</ng-template>
+        <!-- plate no -->
+        <mat-form-field class="w-full">
+          <mat-label>Plate no</mat-label>
+          <mat-select formControlName="plate_no">
+            @for (state of plate_nos; track state) {
+            <mat-option [value]="state.abbreviation">{{
+              state.name
+            }}</mat-option>
             }
-          </mat-form-field>
+          </mat-select>
+          @if (deliveryUnitForm.controls['plate_no'].hasError('required')) {
+          <mat-error>Plate no is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- backup plate no -->
+        @if(deliveryUnitForm.controls['plate_no'].value == 'backup'){
+        <mat-form-field class="w-full">
+          <mat-label>Backup plate no</mat-label>
+          <input type="text" matInput formControlName="backup_plate_no" />
+        </mat-form-field>
+        }
+        <!-- driver -->
+        <mat-form-field class="w-full">
+          <mat-label>Driver</mat-label>
+          <mat-select formControlName="driver">
+            @for (state of drivers; track state) {
+            <mat-option [value]="state.abbreviation">{{
+              state.name
+            }}</mat-option>
+            }
+          </mat-select>
+          @if (deliveryUnitForm.controls['driver'].hasError('required')) {
+          <mat-error>Driver is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- extra driver  -->
+        @if(deliveryUnitForm.controls['driver'].value == 'extra'){
+        <mat-form-field class="w-full">
+          <mat-label>Extra driver</mat-label>
+          <input
+            matInput
+            placeholder="ex. Juan Pablo"
+            formControlName="extra_driver"
+          />
+        </mat-form-field>
+        }
+        <!-- helper -->
+        <mat-form-field class="w-full">
+          <mat-label>Helper</mat-label>
+          <mat-select formControlName="helper">
+            @for (state of helpers; track state) {
+            <mat-option [value]="state.abbreviation">{{
+              state.name
+            }}</mat-option>
+            }
+          </mat-select>
+          @if (deliveryUnitForm.controls['helper'].hasError('required')) {
+          <mat-error>Helper is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- extra helper -->
+        @if(deliveryUnitForm.controls['helper'].value == 'extra'){
+        <mat-form-field class="w-full">
+          <mat-label>Extra helper</mat-label>
+          <input
+            matInput
+            placeholder="ex. Juan Pablo"
+            formControlName="extra_helper"
+          />
+        </mat-form-field>
+        }
+        <!-- odo start -->
+        <mat-form-field class="w-full">
+          <mat-label>Odo start</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="odo_start"
+            placeholder="ex. 50100"
+          />
+          @if (deliveryUnitForm.controls['odo_start'].hasError('required')) {
+          <mat-error>Odo start is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- odo end  -->
+        <mat-form-field class="w-full">
+          <mat-label>Odo end</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="odo_end"
+            placeholder="ex. 50150"
+          />
+          @if (deliveryUnitForm.controls['odo_end'].hasError('required')) {
+          <mat-error>Odo end is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <button mat-button color="primary" matStepperPrevious>Previous</button>
+        <button mat-button color="primary" matStepperNext>Next</button>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Review and Confirm</ng-template>
+      <ng-template matStepContent>
+        <div>
+          <h3>Dispatch details</h3>
+          <ul class="pb-5">
+            <li *ngFor="let control of dispatchFormControls">
+              {{ control.key }} :
+              <strong>
+                {{
+                  control.key.includes("_date")
+                    ? (control.control?.value | date)
+                    : control.key.includes("cbm" || "drops" || "qty")
+                    ? (control.control?.value | number)
+                    : control.control?.value
+                }}
+              </strong>
+            </li>
+          </ul>
         </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <input matInput #postalCode maxlength="5" placeholder="Postal Code" type="number" formControlName="postalCode">
-            <mat-hint align="end">{{postalCode.value.length}} / 5</mat-hint>
-          </mat-form-field>
+        <div>
+          <h3>Delivery unit detail</h3>
+          <ul class="pb-5">
+            <li *ngFor="let control of deliveryUnitFormControls">
+              {{ control.key }} :
+              <strong>{{
+                control.key.includes("odo_")
+                  ? (control.control?.value | number)
+                  : control.control?.value
+              }}</strong>
+            </li>
+          </ul>
         </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <mat-radio-group formControlName="shipping">
-            <mat-radio-button value="free">Free Shipping</mat-radio-button>
-            <mat-radio-button value="priority">Priority Shipping</mat-radio-button>
-            <mat-radio-button value="nextday">Next Day Shipping</mat-radio-button>
-          </mat-radio-group>
+
+        <button mat-button color="primary" matStepperPrevious>Previous</button>
+        <button mat-button color="primary" (click)="onContinue()">
+          Continue
+        </button>
+      </ng-template>
+    </mat-step>
+    <mat-step [completed]="completed">
+      <ng-template class="w-full" matStepLabel>
+        <ng-container *ngIf="loading">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </ng-container>
+        <ng-container *ngIf="!loading"> Done </ng-container>
+      </ng-template>
+      <ng-template matStepContent>
+        <div class="">
+          <h3>
+            {{
+              loading ? "Adding dispatch..." : "Dispatch added successfully!"
+            }}
+          </h3>
+          <p>Do you want to add another dispatch?</p>
+          <button
+            [disabled]="loading"
+            mat-button
+            color="primary"
+            (click)="stepper.reset()"
+          >
+            Yes
+          </button>
+          <a
+            routerLink="../table"
+            [disabled]="loading"
+            mat-button
+            color="primary"
+            >No</a
+          >
         </div>
-      </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary" type="submit">Submit</button>
-    </mat-card-actions>
-  </mat-card>
-</form>
+      </ng-template>
+    </mat-step>
+  </mat-stepper>
+</ng-container>
+
+<!-- <mat-stepper #stepper orientation="vertical"> -->
+<!--! dispatch step1 -->
+<!-- <mat-step [stepControl]="dispatchForm1" errorMassage="dispatchForm1 error">
+      <form [formGroup]="dispatchForm1">
+        <ng-template matStepLabel>Fill out dispatch</ng-template> -->
+
+<!-- </mat-step> -->
+
+<!--! dispatch step2 -->
+<!-- <mat-step>
+      <ng-template> Fill out delivery unit details </ng-template> -->
+
+<!-- <button mat-button color="primary" matStepperBack>Back</button>
+      <button mat-button color="primary" matStepperNext>Next</button>
+    </mat-step>
+  </mat-stepper>
+</ng-container> -->
+
+<!--! edit mode -->
+
+<!-- <ng-container *ngIf="formMode == 'edit'"> -->
+<!-- wd type -->
+<!-- <mat-form-field class="w-full">
+    <mat-label>Workday type</mat-label>
+    <mat-select formControlName="wd_type">
+      @for (state of wd_types; track state) {
+      <mat-option [value]="state.abbreviation">{{ state.name }}</mat-option>
+      }
+    </mat-select>
+    @if (dispatchForm1.controls['wd_type']?.hasError('required')) {
+    <mat-error>Workday type is <strong>required</strong></mat-error>
+    }
+  </mat-form-field> -->
+
+<!-- disp rate -->
+<!-- <mat-form-field class="w-full">
+    <mat-label>Dispatch rate</mat-label>
+    <input
+      matInput
+      type="number"
+      placeholder="ex. 2500"
+      formControlName="disp_rate"
+    />
+    @if (dispatchForm1.controls['disp_rate']?.hasError('required')) {
+    <mat-error>Dispatch rate is <strong>required</strong></mat-error>
+    }
+  </mat-form-field> -->
+
+<!-- inv date -->
+<!-- <mat-form-field class="w-full">
+    <mat-label>Invoice date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker2"
+      placeholder="Choose a date"
+      formControlName="inv_date"
+    />
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle
+      matIconSuffix
+      [for]="picker2"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #picker2></mat-datepicker>
+    @if (dispatchForm1.controls['inv_date']?.hasError('required')) {
+    <mat-error>Invoice date is <strong>required</strong></mat-error>
+    }
+  </mat-form-field> -->
+<!-- inv no -->
+<!-- <mat-form-field class="w-full">
+    <mat-label>Invoice no</mat-label>
+    <input matInput type="text" formControlName="inv_no" />
+    @if (dispatchForm1.controls['inv_no']?.hasError('required')) {
+    <mat-error>Invoice no is <strong>required</strong></mat-error>
+    }
+  </mat-form-field> -->
+
+<!-- or date -->
+<!-- <mat-form-field class="w-full">
+    <mat-label>O.R. date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker3"
+      placeholder="Choose a date"
+      formControlName="or_date"
+    />
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle
+      matIconSuffix
+      [for]="picker3"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #picker3></mat-datepicker>
+    @if (dispatchForm1.controls['or_date']?.hasError('required')) {
+    <mat-error>O.R. date is <strong>required</strong></mat-error>
+    }
+  </mat-form-field> -->
+<!-- or no -->
+<!-- <mat-form-field class="w-full">
+    <mat-label>O.R. no</mat-label>
+    <input matInput type="text" formControlName="or_no" />
+    @if (dispatchForm1.controls['or_no']?.hasError('required')) {
+    <mat-error>O.R. no is <strong>required</strong></mat-error>
+    }
+  </mat-form-field> -->
+<!-- payroll date -->
+<!-- <mat-form-field class="w-full">
+    <mat-label>Payroll date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker4"
+      placeholder="Choose a date"
+      formControlName="payroll_date"
+    />
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle
+      matIconSuffix
+      [for]="picker4"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #picker4></mat-datepicker>
+    @if (dispatchForm1.controls['payroll_date']?.hasError('required')) {
+    <mat-error>Payroll date is <strong>required</strong></mat-error>
+    }
+  </mat-form-field> -->
+<!-- payroll no -->
+<!-- <mat-form-field class="w-full">
+    <mat-label>Payroll no</mat-label>
+    <input matInput type="text" formControlName="payroll_no" />
+    @if (dispatchForm1.controls['payroll_no']?.hasError('required')) {
+    <mat-error>Payroll no is <strong>required</strong></mat-error>
+    }
+  </mat-form-field> -->
+<!-- </ng-container> -->
+
+<!-- <button
+  [disabled]="dispatchForm.invalid"
+  mat-raised-button
+  color="primary"
+  type="submit"
+>
+  Submit
+</button>
+<button
+  (click)="openDialog('300', '300')"
+  mat-stroked-button
+  color="primary"
+  type="button"
+>
+  Cancel
+</button> -->
+<!-- </form> -->

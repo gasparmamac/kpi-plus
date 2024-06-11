@@ -1,6 +1,11 @@
 <section class="flex place-content-between mb-5">
   <h1>Dispatch Table</h1>
-  <button mat-mini-fab color="accent" aria-label="icon button with a add icon">
+  <button
+    (click)="onAdd()"
+    mat-mini-fab
+    color="accent"
+    aria-label="icon button with a add icon"
+  >
     <mat-icon>add</mat-icon>
   </button>
 </section>

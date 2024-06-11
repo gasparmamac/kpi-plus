@@ -1,0 +1,15 @@
+<h3 mat-dialog-title>Add dispatch</h3>
+<mat-dialog-content>Continue adding this dispatch?</mat-dialog-content>
+<mat-dialog-actions>
+  <button type="button" mat-button color="primary" mat-dialog-close>No</button>
+  <button
+    type="button"
+    mat-button
+    color="primary"
+    mat-dialog-close
+    cdkFocusInitial
+    (click)="onYes()"
+  >
+    Yes
+  </button>
+</mat-dialog-actions>

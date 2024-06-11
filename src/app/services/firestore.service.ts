@@ -23,25 +23,32 @@ import {
 // dispatch item data model
 export interface DispatchModel {
   id?: string;
-  destination: string;
-  disp_date: Date | Timestamp | null;
-  disp_rate: number | null;
+  disp_date: Date | Timestamp;
   disp_slip: string;
-  driver: string;
+  route: string;
+  odz_route: string | null;
+  destination: string;
+  cbm: number;
   drops: number;
+  qty: number;
+  plate_no: string;
+  backup_plate_no: string | null;
+  driver: string;
+  extra_driver: string | null;
   helper: string;
+  extra_helper: string | null;
+  odo_start: number;
+  odo_end: number;
+
+  wd_type: string | null;
+  disp_rate: number | null;
   inv_date: Date | Timestamp | null;
   inv_no: string | null;
-  odo_end: number | null;
-  odo_start: number | null;
-  or_date: Timestamp | null;
-  or_no: string | null;
   payroll_date: Date | Timestamp | null;
   payroll_no: string | null;
-  plate_no: string;
-  qty: number;
-  route: string;
-  wd_type: string;
+
+  or_date: Timestamp | null;
+  or_no: string | null;
 }
 
 @Injectable({
