@@ -55,7 +55,6 @@ export class DispatchTableComponent
   @ViewChild(MatSort) sort!: MatSort;
 
   dataSource = new MatTableDataSource();
-
   // displayedColumns = [
   //   'destination',
   //   'disp_date',
@@ -77,7 +76,14 @@ export class DispatchTableComponent
   //   'route',
   //   'wd_type',
   // ];
-  displayedColumns = ['disp_date', 'route', 'plate_no', 'driver', 'helper'];
+  columnsToDisplay = [
+    'disp_date',
+    'route',
+    'plate_no',
+    'driver',
+    'helper',
+    'action',
+  ];
 
   constructor(
     private fb: FormBuilder,

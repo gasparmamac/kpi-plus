@@ -30,7 +30,7 @@ export class DispatchFilterFormComponent {
   ) {}
 
   filterForm = this.fb.group({
-    filterValue: [null, Validators.required],
+    filterValue: null,
   });
 
   filterOptions = [

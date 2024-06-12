@@ -36,107 +36,23 @@
         aria-label="Elements"
         class="min-w-full"
       >
-        <!-- disp_date column -->
-        <ng-container matColumnDef="disp_date">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Disp_date</th>
-          <td mat-cell *matCellDef="let row">{{ row.disp_date | date }}</td>
+        @for(column of columnsToDisplay; track column ){
+        <ng-container matColumnDef="{{ column }}">
+          <th mat-header-cell *matHeaderCellDef>{{ column.toUpperCase() }}</th>
+          <td mat-cell *matCellDef="let element">
+            {{
+              column.includes("_date")
+                ? (element[column] | date)
+                : column.includes("odo_")
+                ? (element[column] | number)
+                : element[column]
+            }}
+          </td>
         </ng-container>
-        <!-- destination column -->
-        <ng-container matColumnDef="destination">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Destination</th>
-          <td mat-cell *matCellDef="let row">{{ row.destination }}</td>
-        </ng-container>
-        <!-- disp_rate column -->
-        <ng-container matColumnDef="disp_rate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Disp_rate</th>
-          <td mat-cell *matCellDef="let row">{{ row.disp_rate }}</td>
-        </ng-container>
-        <!-- disp_slip column -->
-        <ng-container matColumnDef="disp_slip">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Disp_slip</th>
-          <td mat-cell *matCellDef="let row">{{ row.disp_slip }}</td>
-        </ng-container>
-        <!-- driver column -->
-        <ng-container matColumnDef="driver">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Driver</th>
-          <td mat-cell *matCellDef="let row">{{ row.driver }}</td>
-        </ng-container>
-        <!-- drops column -->
-        <ng-container matColumnDef="disp_drops">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Drops</th>
-          <td mat-cell *matCellDef="let row">{{ row.drops }}</td>
-        </ng-container>
-        <!-- helper column -->
-        <ng-container matColumnDef="helper">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Helper</th>
-          <td mat-cell *matCellDef="let row">{{ row.helper }}</td>
-        </ng-container>
-        <!-- inv_date column -->
-        <ng-container matColumnDef="inv_date">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Inv_date</th>
-          <td mat-cell *matCellDef="let row">{{ row.inv_date }}</td>
-        </ng-container>
-        <!-- inv_no column -->
-        <ng-container matColumnDef="inv_no">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Inv_no</th>
-          <td mat-cell *matCellDef="let row">{{ row.inv_no }}</td>
-        </ng-container>
-        <!-- odo_end column -->
-        <ng-container matColumnDef="odo_end">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Odo_end</th>
-          <td mat-cell *matCellDef="let row">{{ row.odo_end }}</td>
-        </ng-container>
-        <!-- odo_start column -->
-        <ng-container matColumnDef="odo_start">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>odo_start</th>
-          <td mat-cell *matCellDef="let row">{{ row.odo_start }}</td>
-        </ng-container>
-        <!-- or_date coulumn -->
-        <ng-container matColumnDef="or_date">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>OR_date</th>
-          <td mat-cell *matCellDef="let row">{{ row.or_date }}</td>
-        </ng-container>
-        <!-- or_no column -->
-        <ng-container matColumnDef="or_no">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>OR_no</th>
-          <td mat-cell *matCellDef="let row">{{ row.or_no }}</td>
-        </ng-container>
-        <!-- payroll_date column -->
-        <ng-container matColumnDef="payroll_date">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            Payroll_date
-          </th>
-          <td mat-cell *matCellDef="let row">{{ row.payroll_date }}</td>
-        </ng-container>
-        <!-- payroll_no column -->
-        <ng-container matColumnDef="payroll_no">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Payroll_no</th>
-          <td mat-cell *matCellDef="let row">{{ row.payroll_no }}</td>
-        </ng-container>
-        <!-- qty column -->
-        <ng-container matColumnDef="qty">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Qty</th>
-          <td mat-cell *matCellDef="let row">{{ row.qty }}</td>
-        </ng-container>
-        <!-- wd_type column -->
-        <ng-container matColumnDef="wd_type">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>WD_type</th>
-          <td mat-cell *matCellDef="let row">{{ row.wd_type }}</td>
-        </ng-container>
-        <!-- route column -->
-        <ng-container matColumnDef="route">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Route</th>
-          <td mat-cell *matCellDef="let row">{{ row.route }}</td>
-        </ng-container>
+        }
 
-        <!-- plate_no column -->
-        <ng-container matColumnDef="plate_no">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Plate_no</th>
-          <td mat-cell *matCellDef="let row">{{ row.plate_no }}</td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
       </table>
     </div>
 
