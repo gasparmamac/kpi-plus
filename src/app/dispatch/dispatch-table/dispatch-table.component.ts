@@ -91,7 +91,13 @@ export class DispatchTableComponent
     private router: Router
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.dataSubscription = this.dispatchService.dispatchItems$.subscribe(
+      (data) => {
+        this.dataSource.data = data;
+      }
+    );
+  }
   ngOnDestroy(): void {
     this.dataSubscription.unsubscribe();
   }
@@ -103,11 +109,6 @@ export class DispatchTableComponent
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-    this.dataSubscription = this.dispatchService.dispatchItems$.subscribe(
-      (data) => {
-        this.dataSource.data = data;
-      }
-    );
   }
 
   onSearchEntry($event: Event) {
