@@ -18,10 +18,19 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { DispatchFilterFormComponent } from '../dispatch-filter-form/dispatch-filter-form.component';
 import { DispatchService } from '../dispatch.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
+import { DispatchDetailViewComponent } from './dispatch-detail-view/dispatch-detail-view.component';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import { DispatchModel } from '../../services/firestore.service';
 
 @Component({
   selector: 'app-dispatch-table',
@@ -45,15 +54,26 @@ import { Router } from '@angular/router';
     ReactiveFormsModule,
 
     DispatchFilterFormComponent,
+    DispatchDetailViewComponent,
+  ],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed, void', style({ height: '0px', minHeight: '0' })),
+      state('expand', style({ height: '*' })),
+      transition(
+        'expanded<=>collapsed',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+      ),
+    ]),
   ],
 })
 export class DispatchTableComponent
   implements AfterViewInit, OnInit, OnDestroy
 {
-  dataSubscription = new Subscription();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  dataSubscription = new Subscription();
   dataSource = new MatTableDataSource();
   // displayedColumns = [
   //   'destination',
@@ -84,6 +104,9 @@ export class DispatchTableComponent
     'helper',
     'action',
   ];
+  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
+  expandedElement!: DispatchModel | null;
+  loading$!: Observable<boolean>;
 
   constructor(
     private fb: FormBuilder,
@@ -92,6 +115,7 @@ export class DispatchTableComponent
   ) {}
 
   ngOnInit(): void {
+    this.loading$ = this.dispatchService.loading$;
     this.dataSubscription = this.dispatchService.dispatchItems$.subscribe(
       (data) => {
         this.dataSource.data = data;

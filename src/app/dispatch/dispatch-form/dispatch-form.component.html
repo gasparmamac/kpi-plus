@@ -1,9 +1,9 @@
-<ng-container *ngIf="formMode == 'add'">
+<ng-container *ngIf="formMode === 'add' || 'edit'">
   <mat-stepper #stepper [orientation]="(stepperOrientation | async)!" linear>
+    <!--! dispatch step -->
     <mat-step [stepControl]="dispatchForm">
       <form [formGroup]="dispatchForm" class="">
-        <ng-template matStepLabel>Enter Dispatch Details</ng-template>
-
+        <ng-template matStepLabel>Dispatch</ng-template>
         <!-- disp date -->
         <mat-form-field class="w-full">
           <mat-label>Dispatch date</mat-label>
@@ -117,9 +117,10 @@
         <button mat-button color="primary" matStepperNext>Next</button>
       </form>
     </mat-step>
+    <!--! courier step -->
     <mat-step [stepControl]="deliveryUnitForm">
       <form [formGroup]="deliveryUnitForm" class="">
-        <ng-template matStepLabel>Enter Courier Details</ng-template>
+        <ng-template matStepLabel>Courier</ng-template>
         <!-- plate no -->
         <mat-form-field class="w-full">
           <mat-label>Plate no</mat-label>
@@ -221,46 +222,229 @@
         <button mat-button color="primary" matStepperNext>Next</button>
       </form>
     </mat-step>
+    <!-- edit mode  -->
+    <ng-container *ngIf="formMode === 'edit'">
+      <!--! invoice step -->
+      <mat-step [stepControl]="invoiceForm">
+        <form [formGroup]="invoiceForm">
+          <ng-template matStepLabel>Invoice</ng-template>
+          <!-- wd type -->
+          <mat-form-field class="w-full">
+            <mat-label>Workday type</mat-label>
+            <mat-select formControlName="wd_type">
+              @for (state of wd_types; track state) {
+              <mat-option [value]="state.abbreviation">{{
+                state.name
+              }}</mat-option>
+              }
+            </mat-select>
+            @if (invoiceForm.controls['wd_type'].hasError('required')) {
+            <mat-error>Workday type is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <!-- disp rate -->
+          <mat-form-field class="w-full">
+            <mat-label>Dispatch rate</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="disp_rate"
+              placeholder="ex. 2500.50"
+            />
+            @if (invoiceForm.controls['disp_rate'].hasError('required')) {
+            <mat-error>Dispatch rate is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <!-- inv date -->
+          <mat-form-field class="w-full">
+            <mat-label>Invoice date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker2"
+              placeholder="MM/DD/YYYY"
+              formControlName="inv_date"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker2"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+            @if (invoiceForm.controls['inv_date'].hasError('required')) {
+            <mat-error>Invoice date is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <!-- inv no -->
+          <mat-form-field class="w-full">
+            <mat-label>Invoice no.</mat-label>
+            <input matInput placeholder="ex.0158956" formControlName="inv_no" />
+            @if (invoiceForm.controls['inv_no'].hasError('required')) {
+            <mat-error>Invoice number is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <button mat-button color="primary" matStepperPrevious>
+            Previous
+          </button>
+          <button mat-button color="primary" matStepperNext>Next</button>
+        </form>
+      </mat-step>
+      <!--! payroll step -->
+      <mat-step [stepControl]="payrollForm">
+        <form [formGroup]="payrollForm">
+          <ng-template matStepLabel>Payroll</ng-template>
+          <!-- payroll date -->
+          <mat-form-field class="w-full">
+            <mat-label>Payroll date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker3"
+              placeholder="MM/DD/YYYY"
+              formControlName="payroll_date"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker3"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker3></mat-datepicker>
+            @if (payrollForm.controls['payroll_date'].hasError('required')) {
+            <mat-error>Payroll date is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <!-- payroll no -->
+          <mat-form-field class="w-full">
+            <mat-label>Payroll no.</mat-label>
+            <input matInput placeholder="ex.123" formControlName="payroll_no" />
+            @if (payrollForm.controls['payroll_no'].hasError('required')) {
+            <mat-error>Payroll no is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <button mat-button color="primary" matStepperPrevious>
+            Previous
+          </button>
+          <button mat-button color="primary" matStepperNext>Next</button>
+        </form>
+      </mat-step>
+    </ng-container>
+    <!--! payment step -->
+    <mat-step [stepControl]="orForm">
+      <form [formGroup]="orForm">
+        <ng-template matStepLabel>Payment</ng-template>
+        <!-- payment date -->
+        <mat-form-field class="w-full">
+          <mat-label>OR date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker4"
+            placeholder="MM/DD/YYYY"
+            formControlName="or_date"
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker4"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker4></mat-datepicker>
+          @if (orForm.controls['or_date'].hasError('required')) {
+          <mat-error
+            >Official receipt date is <strong>required</strong></mat-error
+          >
+          }
+        </mat-form-field>
+        <!-- payment no -->
+        <mat-form-field class="w-full">
+          <mat-label>OR no.</mat-label>
+          <input matInput placeholder="ex.123" formControlName="or_no" />
+          @if (orForm.controls['or_no'].hasError('required')) {
+          <mat-error>Officialreceipt no is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <button mat-button color="primary" matStepperPrevious>Previous</button>
+        <button mat-button color="primary" matStepperNext>Next</button>
+      </form>
+    </mat-step>
+    <!--! Review and Confirm step -->
     <mat-step>
       <ng-template matStepLabel>Review and Confirm</ng-template>
       <ng-template matStepContent>
-        <div>
-          <h3>Dispatch details</h3>
-          <ul class="pb-5">
-            <li *ngFor="let control of dispatchFormControls">
-              {{ control.key }} :
-              <strong>
-                {{
-                  control.key.includes("_date")
-                    ? (control.control?.value | date)
-                    : control.key.includes("cbm" || "drops" || "qty")
+        <div class="flex flex-wrap gap-5">
+          <div>
+            <h3>Dispatch</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of dispatchFormControls">
+                {{ control.key }} :
+                <strong>
+                  {{
+                    control.key.includes("_date")
+                      ? (control.control?.value | date)
+                      : control.key.includes("cbm" || "drops" || "qty")
+                      ? (control.control?.value | number)
+                      : control.control?.value
+                  }}
+                </strong>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Courier</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of deliveryUnitFormControls">
+                {{ control.key }} :
+                <strong>{{
+                  control.key.includes("odo_")
                     ? (control.control?.value | number)
                     : control.control?.value
-                }}
-              </strong>
-            </li>
-          </ul>
+                }}</strong>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Invoice</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of invoiceFormControls">
+                {{ control.key }} :
+                <strong>{{
+                  control.key.includes("_date")
+                    ? (control.control?.value | date)
+                    : control.key.includes("_rate")
+                    ? (control.control?.value
+                      | currency : "PHP" : "symbol" : "1.2-2")
+                    : control.control?.value
+                }}</strong>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Payroll</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of payrollFormControls">
+                {{ control.key }} :
+                <strong>{{
+                  control.key.includes("_date")
+                    ? (control.control?.value | date)
+                    : control.control?.value
+                }}</strong>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Payment</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of orFormControls">
+                {{ control.key }} :
+                <strong>{{
+                  control.key.includes("_date")
+                    ? (control.control?.value | date)
+                    : control.control?.value
+                }}</strong>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div>
-          <h3>Delivery unit detail</h3>
-          <ul class="pb-5">
-            <li *ngFor="let control of deliveryUnitFormControls">
-              {{ control.key }} :
-              <strong>{{
-                control.key.includes("odo_")
-                  ? (control.control?.value | number)
-                  : control.control?.value
-              }}</strong>
-            </li>
-          </ul>
-        </div>
-
         <button mat-button color="primary" matStepperPrevious>Previous</button>
         <button mat-button color="primary" (click)="onContinue()">
           Continue
         </button>
       </ng-template>
     </mat-step>
+    <!--! final step -->
     <mat-step [completed]="completed">
       <ng-template class="w-full" matStepLabel>
         <ng-container *ngIf="loading">
@@ -269,12 +453,11 @@
         <ng-container *ngIf="!loading"> Done </ng-container>
       </ng-template>
       <ng-template matStepContent>
-        <div class="">
-          <h3>
-            {{
-              loading ? "Adding dispatch..." : "Dispatch added successfully!"
-            }}
-          </h3>
+        <div *ngIf="loading">
+          <h3>Adding dispatch...</h3>
+        </div>
+        <div *ngIf="!loading">
+          <h3>Dispatch added successfully!</h3>
           <p>Do you want to add another dispatch?</p>
           <button
             [disabled]="loading"
@@ -286,6 +469,7 @@
           </button>
           <a
             routerLink="../table"
+            [routerLink]="formMode === 'edit' ? '../../table' : '../table'"
             [disabled]="loading"
             mat-button
             color="primary"
@@ -296,153 +480,6 @@
     </mat-step>
   </mat-stepper>
 </ng-container>
-
-<!-- <mat-stepper #stepper orientation="vertical"> -->
-<!--! dispatch step1 -->
-<!-- <mat-step [stepControl]="dispatchForm1" errorMassage="dispatchForm1 error">
-      <form [formGroup]="dispatchForm1">
-        <ng-template matStepLabel>Fill out dispatch</ng-template> -->
-
-<!-- </mat-step> -->
-
-<!--! dispatch step2 -->
-<!-- <mat-step>
-      <ng-template> Fill out delivery unit details </ng-template> -->
-
-<!-- <button mat-button color="primary" matStepperBack>Back</button>
-      <button mat-button color="primary" matStepperNext>Next</button>
-    </mat-step>
-  </mat-stepper>
-</ng-container> -->
-
-<!--! edit mode -->
-
-<!-- <ng-container *ngIf="formMode == 'edit'"> -->
-<!-- wd type -->
-<!-- <mat-form-field class="w-full">
-    <mat-label>Workday type</mat-label>
-    <mat-select formControlName="wd_type">
-      @for (state of wd_types; track state) {
-      <mat-option [value]="state.abbreviation">{{ state.name }}</mat-option>
-      }
-    </mat-select>
-    @if (dispatchForm1.controls['wd_type']?.hasError('required')) {
-    <mat-error>Workday type is <strong>required</strong></mat-error>
-    }
-  </mat-form-field> -->
-
-<!-- disp rate -->
-<!-- <mat-form-field class="w-full">
-    <mat-label>Dispatch rate</mat-label>
-    <input
-      matInput
-      type="number"
-      placeholder="ex. 2500"
-      formControlName="disp_rate"
-    />
-    @if (dispatchForm1.controls['disp_rate']?.hasError('required')) {
-    <mat-error>Dispatch rate is <strong>required</strong></mat-error>
-    }
-  </mat-form-field> -->
-
-<!-- inv date -->
-<!-- <mat-form-field class="w-full">
-    <mat-label>Invoice date</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker2"
-      placeholder="Choose a date"
-      formControlName="inv_date"
-    />
-    <mat-hint>MM/DD/YYYY</mat-hint>
-    <mat-datepicker-toggle
-      matIconSuffix
-      [for]="picker2"
-    ></mat-datepicker-toggle>
-    <mat-datepicker #picker2></mat-datepicker>
-    @if (dispatchForm1.controls['inv_date']?.hasError('required')) {
-    <mat-error>Invoice date is <strong>required</strong></mat-error>
-    }
-  </mat-form-field> -->
-<!-- inv no -->
-<!-- <mat-form-field class="w-full">
-    <mat-label>Invoice no</mat-label>
-    <input matInput type="text" formControlName="inv_no" />
-    @if (dispatchForm1.controls['inv_no']?.hasError('required')) {
-    <mat-error>Invoice no is <strong>required</strong></mat-error>
-    }
-  </mat-form-field> -->
-
-<!-- or date -->
-<!-- <mat-form-field class="w-full">
-    <mat-label>O.R. date</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker3"
-      placeholder="Choose a date"
-      formControlName="or_date"
-    />
-    <mat-hint>MM/DD/YYYY</mat-hint>
-    <mat-datepicker-toggle
-      matIconSuffix
-      [for]="picker3"
-    ></mat-datepicker-toggle>
-    <mat-datepicker #picker3></mat-datepicker>
-    @if (dispatchForm1.controls['or_date']?.hasError('required')) {
-    <mat-error>O.R. date is <strong>required</strong></mat-error>
-    }
-  </mat-form-field> -->
-<!-- or no -->
-<!-- <mat-form-field class="w-full">
-    <mat-label>O.R. no</mat-label>
-    <input matInput type="text" formControlName="or_no" />
-    @if (dispatchForm1.controls['or_no']?.hasError('required')) {
-    <mat-error>O.R. no is <strong>required</strong></mat-error>
-    }
-  </mat-form-field> -->
-<!-- payroll date -->
-<!-- <mat-form-field class="w-full">
-    <mat-label>Payroll date</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker4"
-      placeholder="Choose a date"
-      formControlName="payroll_date"
-    />
-    <mat-hint>MM/DD/YYYY</mat-hint>
-    <mat-datepicker-toggle
-      matIconSuffix
-      [for]="picker4"
-    ></mat-datepicker-toggle>
-    <mat-datepicker #picker4></mat-datepicker>
-    @if (dispatchForm1.controls['payroll_date']?.hasError('required')) {
-    <mat-error>Payroll date is <strong>required</strong></mat-error>
-    }
-  </mat-form-field> -->
-<!-- payroll no -->
-<!-- <mat-form-field class="w-full">
-    <mat-label>Payroll no</mat-label>
-    <input matInput type="text" formControlName="payroll_no" />
-    @if (dispatchForm1.controls['payroll_no']?.hasError('required')) {
-    <mat-error>Payroll no is <strong>required</strong></mat-error>
-    }
-  </mat-form-field> -->
-<!-- </ng-container> -->
-
-<!-- <button
-  [disabled]="dispatchForm.invalid"
-  mat-raised-button
-  color="primary"
-  type="submit"
->
-  Submit
-</button>
-<button
-  (click)="openDialog('300', '300')"
-  mat-stroked-button
-  color="primary"
-  type="button"
->
-  Cancel
-</button> -->
-<!-- </form> -->
+<!-- todo: dispatch detail view  -->
+<!-- todo: table refresh after edit, delete and add -->
+<!-- todo: additional query for last 100 -->

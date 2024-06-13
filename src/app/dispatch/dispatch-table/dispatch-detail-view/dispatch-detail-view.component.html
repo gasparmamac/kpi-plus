@@ -1,0 +1,111 @@
+<div class="flex-grow p-5">
+  <h2>ID: {{ element.id }}</h2>
+  <div class="flex flex-wrap gap-5">
+    <div class="">
+      <h3>Dispatch</h3>
+      <ul>
+        <li>
+          disp_date : <strong>{{ element.disp_date | date }}</strong>
+        </li>
+
+        <li>
+          disp_slip : <strong>{{ element.disp_slip }}</strong>
+        </li>
+        <li>
+          route : <strong>{{ element.route }}</strong>
+        </li>
+        <li>
+          odz_route : <strong>{{ element.odz_route }}</strong>
+        </li>
+        <li>
+          destination : <strong>{{ element.destination }}</strong>
+        </li>
+        <li>
+          cbm element.cbm : <strong>{{ element.cbm }} </strong>
+        </li>
+        <li>
+          drops : <strong>{{ element.drops }}</strong>
+        </li>
+        <li>
+          qty : <strong>{{ element.qty }}</strong>
+        </li>
+      </ul>
+    </div>
+    <div class="">
+      <h3>Courier</h3>
+      <ul>
+        <li>
+          plate_no : <strong>{{ element.plate_no }}</strong>
+        </li>
+        <li>
+          backup_plate_no : <strong>{{ element.backup_plate_no }}</strong>
+        </li>
+        <li>
+          driver : <strong>{{ element.driver }}</strong>
+        </li>
+        <li>
+          extra_driver : <strong>{{ element.extra_driver }}</strong>
+        </li>
+        <li>
+          helper : <strong>{{ element.helper }}</strong>
+        </li>
+        <li>
+          extra_helper : <strong>{{ element.extra_helper }}</strong>
+        </li>
+        <li>
+          odo_start : <strong>{{ element.odo_start | number }}</strong>
+        </li>
+        <li>
+          odo_end : <strong>{{ element.odo_end | number }}</strong>
+        </li>
+      </ul>
+    </div>
+    <div class="">
+      <h3>Invoice</h3>
+      <ul>
+        <li>
+          wd_type : <strong>{{ element.wd_type }}</strong>
+        </li>
+        <li>
+          disp_rate :
+          <strong>{{
+            element.disp_rate | currency : "PHP" : "symbol" : "1.2"
+          }}</strong>
+        </li>
+        <li>
+          inv_date : <strong>{{ element.inv_date | date }}</strong>
+        </li>
+        <li>
+          inv_no : <strong>{{ element.inv_no }}</strong>
+        </li>
+      </ul>
+    </div>
+
+    <div class="">
+      <h3>Payroll</h3>
+      <ul>
+        <li>
+          payroll_date : <strong>{{ element.payroll_date | date }}</strong>
+        </li>
+        <li>
+          payroll_no : <strong>{{ element.payroll_no }}</strong>
+        </li>
+      </ul>
+    </div>
+    <div class="">
+      <h3>Payment</h3>
+      <ul>
+        <li>
+          or_date : <strong>{{ element.or_date | date }}</strong>
+        </li>
+        <li>
+          or_no : <strong>{{ element.or_no }}</strong>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="flex gap-5">
+    <button mat-button color="primary" (click)="onEdit(element)">Edit</button>
+    <button mat-button color="warn" (click)="onDelete(element)">Delete</button>
+  </div>
+</div>

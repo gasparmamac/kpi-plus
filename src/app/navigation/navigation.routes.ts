@@ -35,7 +35,7 @@ export const NAVIGATION_ROUTES = {
             ),
         },
         {
-          path: 'edit',
+          path: 'edit/:id',
           loadComponent: () =>
             import('../dispatch/edit-dispatch/edit-dispatch.component').then(
               (m) => m.EditDispatchComponent

@@ -35,6 +35,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Observable, Subscription, map } from 'rxjs';
 import { DispatchService } from '../dispatch.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { DispatchModel } from '../../services/firestore.service';
 
 @Component({
   selector: 'app-dispatch-form',
@@ -58,6 +59,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 })
 export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() formMode = '';
+  @Input() element!: DispatchModel | null;
   dispatchForm!: FormGroup;
   deliveryUnitForm!: FormGroup;
   invoiceForm!: FormGroup;
@@ -138,6 +140,20 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
       or_date: null,
       or_no: null,
     });
+
+    if (this.element) {
+      this.updateForm();
+    }
+  }
+
+  private updateForm() {
+    if (this.element) {
+      this.dispatchForm.patchValue(this.element);
+      this.deliveryUnitForm.patchValue(this.element);
+      this.invoiceForm.patchValue(this.element);
+      this.payrollForm.patchValue(this.element);
+      this.orForm.patchValue(this.element);
+    }
   }
 
   wd_types = [
@@ -215,6 +231,27 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
     return Object.keys(this.deliveryUnitForm.controls).map((key) => ({
       key,
       control: this.deliveryUnitForm.get(key),
+    }));
+  }
+
+  get invoiceFormControls() {
+    return Object.keys(this.invoiceForm.controls).map((key) => ({
+      key,
+      control: this.invoiceForm.get(key),
+    }));
+  }
+
+  get orFormControls() {
+    return Object.keys(this.orForm.controls).map((key) => ({
+      key,
+      control: this.orForm.get(key),
+    }));
+  }
+
+  get payrollFormControls() {
+    return Object.keys(this.payrollForm.controls).map((key) => ({
+      key,
+      control: this.payrollForm.get(key),
     }));
   }
 
