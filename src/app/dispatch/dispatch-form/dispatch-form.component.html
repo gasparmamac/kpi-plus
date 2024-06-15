@@ -467,14 +467,14 @@
           >
             Yes
           </button>
-          <a
-            routerLink="../table"
-            [routerLink]="formMode === 'edit' ? '../../table' : '../table'"
+          <button
+            (click)="onNo(formMode)"
             [disabled]="loading"
             mat-button
             color="primary"
-            >No</a
           >
+            No
+          </button>
         </div>
       </ng-template>
     </mat-step>

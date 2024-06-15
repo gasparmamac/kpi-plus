@@ -5,8 +5,6 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
-  inject,
-  input,
 } from '@angular/core';
 
 import {
@@ -25,7 +23,7 @@ import {
   StepperOrientation,
 } from '@angular/material/stepper';
 import { MatDialog } from '@angular/material/dialog';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DispatchFormDialogComponent } from './dispatch-form-dialog/dispatch-form-dialog.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -70,6 +68,7 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
   loadingSubscription = new Subscription();
   loading = false;
   completed = false;
+  private defaultFilterValue = 'no_payroll';
 
   @ViewChild('stepper')
   private dispatchStepper!: MatStepper;
@@ -77,6 +76,7 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private dispatchService: DispatchService,
     public dialog: MatDialog,
     public breakpointObserver: BreakpointObserver
@@ -265,5 +265,17 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.dispatchService.addDispatchItem(formValues);
     this.dispatchStepper.next();
+  }
+
+  onNo(formMode: string) {
+    if (formMode === 'edit') {
+      this.router.navigate(['../../table'], {
+        relativeTo: this.activatedRoute,
+      });
+    } else {
+      this.router.navigate(['../table'], {
+        relativeTo: this.activatedRoute,
+      });
+    }
   }
 }

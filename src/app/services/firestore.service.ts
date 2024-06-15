@@ -55,18 +55,6 @@ export interface DispatchModel {
   providedIn: 'root',
 })
 export class FirestoreService {
-  private noPayrollCache:
-    | Promise<QuerySnapshot<DocumentData, DocumentData>>
-    | undefined;
-
-  private noInvoiceCache:
-    | Promise<QuerySnapshot<DocumentData, DocumentData>>
-    | undefined;
-
-  private noORCache:
-    | Promise<QuerySnapshot<DocumentData, DocumentData>>
-    | undefined;
-
   constructor(private firestore: Firestore) {}
 
   // Create a document with auto-generated the id
@@ -104,49 +92,42 @@ export class FirestoreService {
     let docs;
     const collectionReference = collection(this.firestore, collectionName);
 
+    let collectionQuery;
     switch (filterValue) {
       case 'no_invoice':
-        if (this.noInvoiceCache) {
-          return this.noInvoiceCache;
-        } else {
-          const collectionQuery = query(
-            collectionReference,
-            where('inv_no', '==', null),
-            orderBy('inv_no'),
-            limit(100)
-          );
-          this.noInvoiceCache = getDocs(collectionQuery);
-          docs = this.noInvoiceCache;
-        }
+        collectionQuery = query(
+          collectionReference,
+          where('inv_no', '==', null),
+          orderBy('inv_no'),
+          limit(100)
+        );
+        docs = getDocs(collectionQuery);
         break;
       case 'no_or':
-        if (this.noORCache) {
-          return this.noORCache;
-        } else {
-          const collectionQuery = query(
-            collectionReference,
-            where('or_no', '==', null),
-            orderBy('or_no'),
-            limit(100)
-          );
-          this.noORCache = getDocs(collectionQuery);
-          docs = this.noORCache;
-        }
-
+        collectionQuery = query(
+          collectionReference,
+          where('or_no', '==', null),
+          orderBy('or_no'),
+          limit(100)
+        );
+        docs = getDocs(collectionQuery);
+        break;
+      case 'last100':
+        collectionQuery = query(
+          collectionReference,
+          orderBy('disp_date'),
+          limit(100)
+        );
+        docs = getDocs(collectionQuery);
         break;
       default: //no_payroll
-        if (this.noPayrollCache) {
-          return this.noPayrollCache;
-        } else {
-          const collectionQuery = query(
-            collectionReference,
-            where('payroll_no', '==', null),
-            orderBy('payroll_no'),
-            limit(100)
-          );
-          this.noPayrollCache = getDocs(collectionQuery);
-          docs = this.noPayrollCache;
-        }
+        collectionQuery = query(
+          collectionReference,
+          where('payroll_no', '==', null),
+          orderBy('payroll_no'),
+          limit(100)
+        );
+        docs = getDocs(collectionQuery);
     }
     return docs;
   }

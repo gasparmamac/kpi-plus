@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -24,19 +24,22 @@ import { DispatchService } from '../dispatch.service';
   ],
 })
 export class DispatchFilterFormComponent {
+  @Input()
+  defaultFilterValue!: string;
   constructor(
     private fb: FormBuilder,
     private dispatchService: DispatchService
   ) {}
 
   filterForm = this.fb.group({
-    filterValue: null,
+    filterValue: [this.defaultFilterValue, Validators.required],
   });
 
   filterOptions = [
     { name: 'No payroll', abbreviation: 'no_payroll' },
     { name: 'No invoice', abbreviation: 'no_invoice' },
-    { name: 'No O.R.', abbreviation: 'no_or' },
+    { name: 'No o.r.', abbreviation: 'no_or' },
+    { name: 'Last 100', abbreviation: 'last100' },
   ];
 
   onApply(): void {

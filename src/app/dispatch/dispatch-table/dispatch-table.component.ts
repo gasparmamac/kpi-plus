@@ -74,6 +74,8 @@ export class DispatchTableComponent
   @ViewChild(MatSort) sort!: MatSort;
 
   dataSubscription = new Subscription();
+  showTableSubscription = new Subscription();
+
   dataSource = new MatTableDataSource();
   // displayedColumns = [
   //   'destination',
@@ -96,17 +98,14 @@ export class DispatchTableComponent
   //   'route',
   //   'wd_type',
   // ];
-  columnsToDisplay = [
-    'disp_date',
-    'route',
-    'plate_no',
-    'driver',
-    'helper',
-    'action',
-  ];
+  columnsToDisplay = ['disp_date', 'route', 'plate_no', 'driver', 'helper'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
   expandedElement!: DispatchModel | null;
+  showTable = false;
+
   loading$!: Observable<boolean>;
+  feedbackMsg$!: Observable<string>;
+  defaultFilterValue = 'no_payroll';
 
   constructor(
     private fb: FormBuilder,
@@ -115,7 +114,15 @@ export class DispatchTableComponent
   ) {}
 
   ngOnInit(): void {
+    console.log('table initialised');
+    this.dispatchService.getDispatchItems(this.defaultFilterValue);
     this.loading$ = this.dispatchService.loading$;
+    this.feedbackMsg$ = this.dispatchService.feedbackMsg$;
+    this.showTableSubscription = this.dispatchService.showTable$.subscribe(
+      (status) => {
+        this.showTable = status;
+      }
+    );
     this.dataSubscription = this.dispatchService.dispatchItems$.subscribe(
       (data) => {
         this.dataSource.data = data;
@@ -124,6 +131,7 @@ export class DispatchTableComponent
   }
   ngOnDestroy(): void {
     this.dataSubscription.unsubscribe();
+    this.showTableSubscription.unsubscribe();
   }
 
   searchEntryForm = this.fb.group({
