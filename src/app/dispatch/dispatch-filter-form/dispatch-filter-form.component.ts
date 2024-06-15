@@ -30,7 +30,6 @@ import { DispatchService } from '../dispatch.service';
   ],
 })
 export class DispatchFilterFormComponent implements OnInit {
-  @Input() defaultFilterValue!: string;
   filterForm!: FormGroup<{ filterValue: FormControl<string | null> }>;
 
   constructor(
@@ -40,7 +39,7 @@ export class DispatchFilterFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.filterForm = this.fb.group({
-      filterValue: [this.defaultFilterValue, Validators.required],
+      filterValue: ['no_payroll', Validators.required],
     });
   }
 
@@ -53,6 +52,7 @@ export class DispatchFilterFormComponent implements OnInit {
 
   onApply(): void {
     const filterValue = String(this.filterForm.value.filterValue);
-    this.dispatchService.getDispatchItems(filterValue);
+    this.dispatchService.filterValueSubject.next(filterValue);
+    this.dispatchService.getDispatchItems();
   }
 }

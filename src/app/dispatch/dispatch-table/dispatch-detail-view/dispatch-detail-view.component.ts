@@ -23,7 +23,6 @@ export class DispatchDetailViewComponent {
 
   onDelete(id: string) {
     this.dispatchService.deleteDispatch(id);
-    this.router.navigate(['/menu/dispatch/table']);
   }
 
   onEdit(element: DispatchModel) {

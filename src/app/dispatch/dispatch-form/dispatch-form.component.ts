@@ -263,8 +263,9 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
       ...this.payrollForm.value,
       ...this.orForm.value,
     };
-    this.dispatchService.addDispatchItem(formValues);
-    this.dispatchStepper.next();
+    this.dispatchService
+      .addDispatchItem(formValues)
+      .then(() => this.dispatchStepper.next());
   }
 
   onNo(formMode: string) {
