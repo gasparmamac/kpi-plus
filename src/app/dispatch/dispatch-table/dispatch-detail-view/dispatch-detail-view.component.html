@@ -106,6 +106,8 @@
   </div>
   <div class="flex gap-5">
     <button mat-button color="primary" (click)="onEdit(element)">Edit</button>
-    <button mat-button color="warn" (click)="onDelete(element)">Delete</button>
+    <button mat-button color="warn" (click)="onDelete(element.id)">
+      Delete
+    </button>
   </div>
 </div>

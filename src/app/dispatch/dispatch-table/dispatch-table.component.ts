@@ -21,7 +21,7 @@ import { DispatchService } from '../dispatch.service';
 import { Observable, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { DispatchDetailViewComponent } from './dispatch-detail-view/dispatch-detail-view.component';
 import {
   animate,
@@ -52,6 +52,7 @@ import { DispatchModel } from '../../services/firestore.service';
     MatCardModule,
     MatProgressBarModule,
     ReactiveFormsModule,
+    RouterModule,
 
     DispatchFilterFormComponent,
     DispatchDetailViewComponent,

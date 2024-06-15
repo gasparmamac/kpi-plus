@@ -3,6 +3,7 @@ import { DispatchModel } from '../../../services/firestore.service';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DispatchService } from '../../dispatch.service';
 
 @Component({
   selector: 'app-dispatch-detail-view',
@@ -14,12 +15,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class DispatchDetailViewComponent {
   @Input() element: any;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
-  onDelete(element: any) {
-    console.log(element.id);
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private dispatchService: DispatchService
+  ) {}
+
+  onDelete(id: string) {
+    this.dispatchService.deleteDispatch(id);
+    this.router.navigate(['/menu/dispatch/table']);
   }
-  onEdit(element: any) {
-    console.log('on edit element: ', element);
+
+  onEdit(element: DispatchModel) {
     this.router.navigate(['../edit', element.id], {
       state: { element },
       relativeTo: this.activatedRoute,

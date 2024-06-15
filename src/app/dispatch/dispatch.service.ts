@@ -19,21 +19,10 @@ export class DispatchService {
   feedbackMsg$ = this.feedbackMsgSubject.asObservable();
 
   private cacheObj: { [key: string]: DispatchModel[] } = {};
+  private filterValue: string;
 
-  constructor(private firestoreService: FirestoreService) {}
-
-  private updateCacheObj(key: string, dispatchArr: DispatchModel[]) {
-    if (this.cacheObj.hasOwnProperty(key)) {
-      console.log(`This key "${key}" exist. return the dspatchArray.`);
-      return this.cacheObj[key];
-    } else {
-      console.log(`This key does not exist: ${key}`);
-      console.log(
-        `This key "${key}" does NOT exist. Add the dspatchArray to the cache then return the dispatch array.`
-      );
-      this.cacheObj[key] = dispatchArr;
-      return this.cacheObj[key];
-    }
+  constructor(private firestoreService: FirestoreService) {
+    this.filterValue = 'no_filter';
   }
 
   private setShowTable(cacheObj: object) {
@@ -45,7 +34,9 @@ export class DispatchService {
       this.showTableSubject.next(true);
     }
   }
+
   async getDispatchItems(filterValue: string) {
+    this.filterValue = filterValue;
     this.loadingSubject.next(true);
     // check if query is cached. return cache array if true. else go to firestore
     if (this.cacheObj.hasOwnProperty(filterValue)) {
@@ -93,7 +84,6 @@ export class DispatchService {
         .createDoc('dispatch', data)
         .then((createdDoc) => {
           const id = createdDoc.id;
-          console.log('Created doc id : ', id);
           // add the added dispatch to each cache item
           const addedDispatchItem = { ...data, id: id };
           Object.keys(this.cacheObj).map((key) => {
@@ -107,4 +97,26 @@ export class DispatchService {
       console.log('Error in adding dispatch item: ', error);
     }
   }
+
+  async deleteDispatch(id: string) {
+    this.loadingSubject.next(true);
+    try {
+      await this.firestoreService.deleteDoc('dispatch', id).then(() => {
+        // remove the deleted dispatch on cache item
+        Object.keys(this.cacheObj).map((key) => {
+          const newArr = this.cacheObj[key].filter((item) => item.id !== id);
+          console.log(newArr);
+          this.cacheObj[key] = newArr;
+        });
+      });
+
+      this.loadingSubject.next(false);
+      this.getDispatchItems(this.filterValue);
+    } catch (error) {
+      this.loadingSubject.next(false);
+      console.log('Error in deleting dispatch item: ', error);
+    }
+  }
+
+  private updateTable() {}
 }

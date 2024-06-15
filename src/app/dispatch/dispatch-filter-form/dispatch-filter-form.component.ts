@@ -1,6 +1,12 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -23,17 +29,20 @@ import { DispatchService } from '../dispatch.service';
     ReactiveFormsModule,
   ],
 })
-export class DispatchFilterFormComponent {
-  @Input()
-  defaultFilterValue!: string;
+export class DispatchFilterFormComponent implements OnInit {
+  @Input() defaultFilterValue!: string;
+  filterForm!: FormGroup<{ filterValue: FormControl<string | null> }>;
+
   constructor(
     private fb: FormBuilder,
     private dispatchService: DispatchService
   ) {}
 
-  filterForm = this.fb.group({
-    filterValue: [this.defaultFilterValue, Validators.required],
-  });
+  ngOnInit(): void {
+    this.filterForm = this.fb.group({
+      filterValue: [this.defaultFilterValue, Validators.required],
+    });
+  }
 
   filterOptions = [
     { name: 'No payroll', abbreviation: 'no_payroll' },

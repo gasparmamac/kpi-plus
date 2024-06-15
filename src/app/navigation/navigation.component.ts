@@ -17,7 +17,6 @@ import { map, shareReplay } from 'rxjs/operators';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CommonService } from '../services/common.service';
 
 @Component({
