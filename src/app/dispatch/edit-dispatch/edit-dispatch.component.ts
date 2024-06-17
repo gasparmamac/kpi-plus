@@ -19,8 +19,5 @@ export class EditDispatchComponent implements OnInit {
     this.element = navigation?.extras.state?.['element'];
     this.elementId = this.activatedRoute.snapshot.paramMap.get('id');
   }
-  ngOnInit(): void {
-    console.log('edit dispatch element: ', this.element);
-    console.log('edit dispatch elementID: ', this.elementId);
-  }
+  ngOnInit(): void {}
 }

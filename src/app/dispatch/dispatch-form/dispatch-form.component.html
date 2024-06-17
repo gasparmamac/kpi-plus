@@ -323,43 +323,47 @@
           <button mat-button color="primary" matStepperNext>Next</button>
         </form>
       </mat-step>
+      <!--! payment step -->
+      <mat-step [stepControl]="orForm">
+        <form [formGroup]="orForm">
+          <ng-template matStepLabel>Payment</ng-template>
+          <!-- payment date -->
+          <mat-form-field class="w-full">
+            <mat-label>OR date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker4"
+              placeholder="MM/DD/YYYY"
+              formControlName="or_date"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker4"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker4></mat-datepicker>
+            @if (orForm.controls['or_date'].hasError('required')) {
+            <mat-error
+              >Official receipt date is <strong>required</strong></mat-error
+            >
+            }
+          </mat-form-field>
+          <!-- payment no -->
+          <mat-form-field class="w-full">
+            <mat-label>OR no.</mat-label>
+            <input matInput placeholder="ex.123" formControlName="or_no" />
+            @if (orForm.controls['or_no'].hasError('required')) {
+            <mat-error
+              >Officialreceipt no is <strong>required</strong></mat-error
+            >
+            }
+          </mat-form-field>
+          <button mat-button color="primary" matStepperPrevious>
+            Previous
+          </button>
+          <button mat-button color="primary" matStepperNext>Next</button>
+        </form>
+      </mat-step>
     </ng-container>
-    <!--! payment step -->
-    <mat-step [stepControl]="orForm">
-      <form [formGroup]="orForm">
-        <ng-template matStepLabel>Payment</ng-template>
-        <!-- payment date -->
-        <mat-form-field class="w-full">
-          <mat-label>OR date</mat-label>
-          <input
-            matInput
-            [matDatepicker]="picker4"
-            placeholder="MM/DD/YYYY"
-            formControlName="or_date"
-          />
-          <mat-datepicker-toggle
-            matIconSuffix
-            [for]="picker4"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #picker4></mat-datepicker>
-          @if (orForm.controls['or_date'].hasError('required')) {
-          <mat-error
-            >Official receipt date is <strong>required</strong></mat-error
-          >
-          }
-        </mat-form-field>
-        <!-- payment no -->
-        <mat-form-field class="w-full">
-          <mat-label>OR no.</mat-label>
-          <input matInput placeholder="ex.123" formControlName="or_no" />
-          @if (orForm.controls['or_no'].hasError('required')) {
-          <mat-error>Officialreceipt no is <strong>required</strong></mat-error>
-          }
-        </mat-form-field>
-        <button mat-button color="primary" matStepperPrevious>Previous</button>
-        <button mat-button color="primary" matStepperNext>Next</button>
-      </form>
-    </mat-step>
     <!--! Review and Confirm step -->
     <mat-step>
       <ng-template matStepLabel>Review and Confirm</ng-template>
@@ -480,6 +484,3 @@
     </mat-step>
   </mat-stepper>
 </ng-container>
-<!-- todo: dispatch detail view  -->
-<!-- todo: table refresh after edit, delete and add -->
-<!-- todo: additional query for last 100 -->

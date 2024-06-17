@@ -68,7 +68,6 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
   loadingSubscription = new Subscription();
   loading = false;
   completed = false;
-  private defaultFilterValue = 'no_payroll';
 
   @ViewChild('stepper')
   private dispatchStepper!: MatStepper;
@@ -120,15 +119,8 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
       odo_start: [0, Validators.required],
     });
     this.invoiceForm = this.fb.group({
-      wd_type: [null, Validators.required],
-      disp_rate: [
-        null,
-        Validators.compose([
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(4),
-        ]),
-      ],
+      wd_type: null,
+      disp_rate: null,
       inv_date: null,
       inv_no: null,
     });
@@ -263,9 +255,26 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
       ...this.payrollForm.value,
       ...this.orForm.value,
     };
-    this.dispatchService
-      .addDispatchItem(formValues)
-      .then(() => this.dispatchStepper.next());
+    switch (this.formMode) {
+      case 'edit':
+        if (this.element) {
+          if (this.element.id) {
+            const id = this.element.id;
+            this.dispatchService
+              .updateDispatch(id, formValues)
+              .then(() => this.dispatchStepper.next());
+          } else {
+            console.log('Error updating dispatch: No ID');
+          }
+        } else {
+          console.log('Error updating dispatch: No Element');
+        }
+        break;
+      default: //formMode === add
+        this.dispatchService
+          .addDispatchItem(formValues)
+          .then(() => this.dispatchStepper.next());
+    }
   }
 
   onNo(formMode: string) {

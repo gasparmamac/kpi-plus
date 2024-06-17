@@ -81,15 +81,15 @@ export class DispatchService implements OnInit, OnDestroy {
     });
   }
 
-  async addDispatchItem(data: DispatchModel) {
+  async addDispatchItem(dispatchFormData: DispatchModel) {
     this.loadingSubject.next(true);
     try {
       await this.firestoreService
-        .createDoc('dispatch', data)
+        .createDoc('dispatch', dispatchFormData)
         .then((createdDoc) => {
           const id = createdDoc.id;
           // add the added dispatch to each cache item
-          const addedDispatchItem = { ...data, id: id };
+          const addedDispatchItem = { ...dispatchFormData, id: id };
           Object.keys(this.cacheObj).map((key) => {
             this.cacheObj[key] = [...this.cacheObj[key], addedDispatchItem];
           });
@@ -122,5 +122,29 @@ export class DispatchService implements OnInit, OnDestroy {
     }
   }
 
-  private updateTable() {}
+  async updateDispatch(id: string, editDispatchFormData: DispatchModel) {
+    this.loadingSubject.next(true);
+    try {
+      await this.firestoreService
+        .updateDoc('dispatch', id, editDispatchFormData)
+        .then(() => {
+          // iterate cache object
+          Object.keys(this.cacheObj).map((key) => {
+            // iterate dispatch array and update the object
+            let updatedCache = this.cacheObj[key].map((obj) => {
+              if (obj.id === id) {
+                return { ...editDispatchFormData, id: id };
+              } else {
+                return obj;
+              }
+            });
+            // update cache object
+            this.cacheObj[key] = updatedCache;
+          });
+          this.loadingSubject.next(false);
+        });
+    } catch (error) {
+      console.log('Error updating dispatch: ', error);
+    }
+  }
 }

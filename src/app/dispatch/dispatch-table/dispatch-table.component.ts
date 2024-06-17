@@ -115,7 +115,6 @@ export class DispatchTableComponent
   ) {}
 
   ngOnInit(): void {
-    console.log('table initialised');
     this.dispatchService.getDispatchItems();
     this.loading$ = this.dispatchService.loading$;
     this.feedbackMsg$ = this.dispatchService.feedbackMsg$;
