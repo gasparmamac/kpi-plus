@@ -13,6 +13,7 @@ import {
   getDoc,
   getDocs,
   limit,
+  or,
   orderBy,
   query,
   setDoc,
@@ -97,8 +98,13 @@ export class FirestoreService {
       case 'no_invoice':
         collectionQuery = query(
           collectionReference,
-          where('inv_no', '==', null),
-          orderBy('inv_no'),
+          or(
+            where('inv_no', '==', null),
+            where('inv_no', '==', ''),
+            where('inv_date', '==', null),
+            where('inv_date', '==', '')
+          ),
+          orderBy('disp_date', 'desc'),
           limit(100)
         );
         docs = getDocs(collectionQuery);
@@ -106,8 +112,13 @@ export class FirestoreService {
       case 'no_or':
         collectionQuery = query(
           collectionReference,
-          where('or_no', '==', null),
-          orderBy('or_no'),
+          or(
+            where('or_no', '==', null),
+            where('or_no', '==', ''),
+            where('or_date', '==', null),
+            where('or_date', '==', '')
+          ),
+          orderBy('disp_date', 'desc'),
           limit(100)
         );
         docs = getDocs(collectionQuery);
@@ -115,7 +126,7 @@ export class FirestoreService {
       case 'last100':
         collectionQuery = query(
           collectionReference,
-          orderBy('disp_date'),
+          orderBy('disp_date', 'desc'),
           limit(100)
         );
         docs = getDocs(collectionQuery);
@@ -123,8 +134,13 @@ export class FirestoreService {
       default: //no_payroll
         collectionQuery = query(
           collectionReference,
-          where('payroll_no', '==', null),
-          orderBy('payroll_no'),
+          or(
+            where('payroll_no', '==', null),
+            where('payroll_no', '==', ''),
+            where('payroll_date', '==', null),
+            where('payroll_date', '==', '')
+          ),
+          orderBy('disp_date', 'desc'),
           limit(100)
         );
         docs = getDocs(collectionQuery);
