@@ -128,19 +128,8 @@ export class DispatchService implements OnInit, OnDestroy {
       await this.firestoreService
         .updateDoc('dispatch', id, editDispatchFormData)
         .then(() => {
-          // iterate cache object
-          Object.keys(this.cacheObj).map((key) => {
-            // iterate dispatch array and update the object
-            let updatedCache = this.cacheObj[key].map((obj) => {
-              if (obj.id === id) {
-                return { ...editDispatchFormData, id: id };
-              } else {
-                return obj;
-              }
-            });
-            // update cache object
-            this.cacheObj[key] = updatedCache;
-          });
+          // reset cache object
+          this.cacheObj = {};
           this.loadingSubject.next(false);
         });
     } catch (error) {
