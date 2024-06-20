@@ -136,7 +136,7 @@
           }
         </mat-form-field>
         <!-- backup plate no -->
-        @if(deliveryUnitForm.controls['plate_no'].value == 'backup'){
+        @if(deliveryUnitForm.controls['plate_no'].value == 'BAC'){
         <mat-form-field class="w-full">
           <mat-label>Backup plate no</mat-label>
           <input type="text" matInput formControlName="backup_plate_no" />
@@ -157,7 +157,7 @@
           }
         </mat-form-field>
         <!-- extra driver  -->
-        @if(deliveryUnitForm.controls['driver'].value == 'extra'){
+        @if(deliveryUnitForm.controls['driver'].value == 'EXD'){
         <mat-form-field class="w-full">
           <mat-label>Extra driver</mat-label>
           <input
@@ -182,7 +182,7 @@
           }
         </mat-form-field>
         <!-- extra helper -->
-        @if(deliveryUnitForm.controls['helper'].value == 'extra'){
+        @if(deliveryUnitForm.controls['helper'].value == 'EXH'){
         <mat-form-field class="w-full">
           <mat-label>Extra helper</mat-label>
           <input

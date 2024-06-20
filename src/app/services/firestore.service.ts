@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-  DocumentData,
   DocumentReference,
   DocumentSnapshot,
   Firestore,
@@ -29,7 +28,6 @@ export interface DispatchModel {
   disp_date: Date | Timestamp;
   disp_slip: string;
   route: string;
-  odz_route: string | null;
   destination: string;
   cbm: number;
   drops: number;
@@ -184,7 +182,20 @@ export class FirestoreService {
       map((data) =>
         data.map((item) => {
           console.log('item: ', item.id);
-          return { ...item, disp_date: item['disp_date'].toDate() };
+          return {
+            ...item,
+            disp_date: item['disp_date']?.toDate(),
+            inv_date: item['inv_date']?.toDate(),
+            payroll_date: item['payroll_date']?.toDate(),
+            or_date: item['or_date']?.toDate(),
+            plate_no:
+              item['plate_no'] === 'BAC'
+                ? `${item['plate_no']}: ${item['backup_plate_no']}`
+                : item['plate_no'],
+            destination: `${item['route'].toUpperCase()}: ${item[
+              'destination'
+            ].toLowerCase()}`,
+          };
         })
       )
     ) as Observable<DispatchModel[]>;

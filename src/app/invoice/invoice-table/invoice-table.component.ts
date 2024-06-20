@@ -8,13 +8,21 @@ import {
   FirestoreService,
 } from '../../services/firestore.service';
 import { CommonModule } from '@angular/common';
+import { SearchEntryComponent } from '../../forms/search-entry/search-entry.component';
+import { FormsService } from '../../forms/forms.service';
 
 @Component({
   selector: 'app-invoice-table',
   templateUrl: './invoice-table.component.html',
   styleUrl: './invoice-table.component.css',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule],
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    SearchEntryComponent,
+  ],
 })
 export class InvoiceTableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -22,16 +30,22 @@ export class InvoiceTableComponent implements AfterViewInit {
   @ViewChild(MatTable) table!: MatTable<DispatchModel>;
   dataSource: any;
 
-  constructor(private firestoreService: FirestoreService) {
-    firestoreService.loadDispatchForInvoice(); //need caching or else, it will always submit query to server
-    this.dataSource = new InvoiceTableDataSource(this.firestoreService);
+  constructor(
+    private firestoreService: FirestoreService,
+    private formsService: FormsService
+  ) {
+    //need caching or else, it will always submit query to server
+    this.dataSource = new InvoiceTableDataSource(
+      this.firestoreService,
+      this.formsService
+    );
   }
 
   displayedColumns = [
     'disp_date',
     'disp_slip',
-    'destination',
     'plate_no',
+    'destination',
     'cbm',
     'qty',
     'drops',

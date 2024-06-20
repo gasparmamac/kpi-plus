@@ -1,13 +1,14 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge, Subscription } from 'rxjs';
 import {
   DispatchModel,
   FirestoreService,
 } from '../../services/firestore.service';
 import { Timestamp } from '@angular/fire/firestore';
+import { FormsService } from '../../forms/forms.service';
 
 // TODO: Replace this with your own data model type
 // TODO: replace this with real data from your application
@@ -23,15 +24,24 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
 
+  searchInputSubscription = new Subscription();
+  searchInput$;
+
   private forInvoiceItemsSubscription = new Subscription();
 
-  constructor(private firestoreService: FirestoreService) {
+  constructor(
+    private firestoreService: FirestoreService,
+    private formsService: FormsService
+  ) {
     super();
+    this.firestoreService.loadDispatchForInvoice();
     this.forInvoiceItemsSubscription =
       this.firestoreService.dispatchForInvoiceItems$.subscribe((data) => {
-        console.log(data);
+        console.log('data: ', data);
         this.data = data;
       });
+
+    this.searchInput$ = formsService.searchInput$;
   }
 
   /**
@@ -46,11 +56,14 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
 
       return merge(
         this.firestoreService.dispatchForInvoiceItems$,
+        this.formsService.searchInput$,
         this.paginator.page,
         this.sort.sortChange
       ).pipe(
         map(() => {
-          return this.getPagedData(this.getSortedData([...this.data]));
+          const filteredData = this.getFilteredData(this.data);
+          const sortedData = this.getSortedData(filteredData);
+          return this.getPagedData(sortedData);
         })
       );
     } else {
@@ -60,12 +73,33 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
     }
   }
 
+  private getFilteredData(data: DispatchModel[]): DispatchModel[] {
+    let filteredData: DispatchModel[] = [];
+    this.searchInputSubscription = this.formsService.searchInput$.subscribe(
+      (filterValue) => {
+        filteredData = data.filter((item) =>
+          this.matchesFilter(item, filterValue)
+        );
+      }
+    );
+    return filteredData;
+  }
+
+  private matchesFilter(item: DispatchModel, filterValue: string): unknown {
+    return (
+      item.disp_slip.toLowerCase().includes(filterValue) ||
+      item.plate_no.toLowerCase().includes(filterValue) ||
+      item.destination.toLowerCase().includes(filterValue)
+    );
+  }
+
   /**
    *  Called when the table is being destroyed. Use this function, to clean up
    * any open connections or free any held resources that were set up during connect.
    */
   disconnect(): void {
     this.forInvoiceItemsSubscription.unsubscribe();
+    this.searchInputSubscription.unsubscribe();
   }
 
   /**
@@ -95,8 +129,6 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
       switch (this.sort?.active) {
         case 'disp_date':
           return compare(a.disp_date, b.disp_date, isAsc);
-        case 'plate_no':
-          return compare(+a.plate_no, +b.plate_no, isAsc);
         default:
           return 0;
       }
@@ -106,8 +138,8 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
 
 /** Simple sort comparator for example ID/Name columns (for client-side sorting). */
 function compare(
-  a: Timestamp | Date | number,
-  b: Timestamp | Date | number,
+  a: Date | Timestamp,
+  b: Date | Timestamp,
   isAsc: boolean
 ): number {
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);

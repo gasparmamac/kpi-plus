@@ -17,11 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
-import {
-  MatStepper,
-  MatStepperModule,
-  StepperOrientation,
-} from '@angular/material/stepper';
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DispatchFormDialogComponent } from './dispatch-form-dialog/dispatch-form-dialog.component';
@@ -156,23 +152,23 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   routes = [
-    { name: 'Downtown Davao', abbreviation: 'downtown davao' },
-    { name: 'Calinan', abbreviation: 'calinan' },
-    { name: 'Toril', abbreviation: 'toril' },
-    { name: 'Outside delivery zone (ODZ)', abbreviation: 'odz' },
+    { name: 'Downtown Davao', abbreviation: 'DVO' },
+    { name: 'Calinan', abbreviation: 'CAL' },
+    { name: 'Toril', abbreviation: 'TOR' },
+    { name: 'Outside delivery zone (ODZ)', abbreviation: 'ODZ' },
   ];
   drivers = [
     { name: 'driver1', abbreviation: 'd1' },
     { name: 'driver2', abbreviation: 'd2' },
     { name: 'driver3', abbreviation: 'd3' },
-    { name: 'Extra', abbreviation: 'extra' },
+    { name: 'Extra', abbreviation: 'EXD' },
   ];
 
   helpers = [
     { name: 'helper1', abbreviation: 'h1' },
     { name: 'helper2', abbreviation: 'h2' },
     { name: 'helper3', abbreviation: 'h3' },
-    { name: 'Extra', abbreviation: 'extra' },
+    { name: 'Extra', abbreviation: 'EXH' },
   ];
 
   plate_nos = [
@@ -180,7 +176,7 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
     { name: 'ykv852', abbreviation: 'ykv852' },
     { name: 'mdk745', abbreviation: 'mdk745' },
     { name: 'lms946', abbreviation: 'lms946' },
-    { name: 'BACKUP', abbreviation: 'backup' },
+    { name: 'BACKUP', abbreviation: 'BAC' },
   ];
 
   onSubmit(): void {

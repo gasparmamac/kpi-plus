@@ -1,0 +1,14 @@
+<form [formGroup]="searchEntryForm" (keyup)="onSearchEntry($event)" novalidate>
+  <div class="row">
+    <div class="col">
+      <mat-form-field class="full-width">
+        <mat-label>Search entry</mat-label>
+        <input
+          matInput
+          placeholder="disp_slip, plate_no, destination"
+          formControlName="searchEntry"
+        />
+      </mat-form-field>
+    </div>
+  </div>
+</form>
