@@ -43,5 +43,11 @@ export const NAVIGATION_ROUTES = {
         },
       ],
     },
+
+    {
+      path: 'invoice',
+      loadComponent: () =>
+        import('../invoice/invoice.component').then((m) => m.InvoiceComponent),
+    },
   ],
 };

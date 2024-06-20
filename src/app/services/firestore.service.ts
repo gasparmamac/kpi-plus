@@ -8,6 +8,7 @@ import {
   Timestamp,
   addDoc,
   collection,
+  collectionData,
   deleteDoc,
   doc,
   getDoc,
@@ -20,6 +21,7 @@ import {
   updateDoc,
   where,
 } from '@angular/fire/firestore';
+import { Observable, catchError, map } from 'rxjs';
 
 // dispatch item data model
 export interface DispatchModel {
@@ -56,6 +58,8 @@ export interface DispatchModel {
   providedIn: 'root',
 })
 export class FirestoreService {
+  dispatchForInvoiceItems$!: Observable<DispatchModel[]>;
+
   constructor(private firestore: Firestore) {}
 
   // Create a document with auto-generated the id
@@ -158,5 +162,31 @@ export class FirestoreService {
   deleteDoc(collectionName = 'dispatch', id: string): Promise<void> {
     const documentReference = doc(this.firestore, `${collectionName}/${id}`);
     return deleteDoc(documentReference);
+  }
+
+  // invoice query
+  loadDispatchForInvoice() {
+    const collectionName = 'dispatch';
+    const firestore = this.firestore;
+    const collectionRef = collection(firestore, collectionName);
+    const noInvoiceItemsQuery = query(
+      collectionRef,
+      or(
+        where('inv_date', '==', null),
+        where('inv_no', '==', null),
+        where('inv_date', '==', ''),
+        where('inv_no', '==', '')
+      )
+    );
+    this.dispatchForInvoiceItems$ = collectionData(noInvoiceItemsQuery, {
+      idField: 'id',
+    }).pipe(
+      map((data) =>
+        data.map((item) => {
+          console.log('item: ', item.id);
+          return { ...item, disp_date: item['disp_date'].toDate() };
+        })
+      )
+    ) as Observable<DispatchModel[]>;
   }
 }
