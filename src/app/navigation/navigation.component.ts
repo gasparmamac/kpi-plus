@@ -37,10 +37,7 @@ import { CommonService } from '../services/common.service';
   ],
 })
 export class NavigationComponent implements OnInit, OnDestroy {
-  constructor(
-    private authService: AuthService,
-    private commonService: CommonService
-  ) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {}
   ngOnDestroy(): void {}

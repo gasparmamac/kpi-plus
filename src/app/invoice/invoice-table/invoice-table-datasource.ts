@@ -35,11 +35,6 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
   ) {
     super();
     this.firestoreService.loadDispatchForInvoice();
-    this.forInvoiceItemsSubscription =
-      this.firestoreService.dispatchForInvoiceItems$.subscribe((data) => {
-        console.log('data: ', data);
-        this.data = data;
-      });
 
     this.searchInput$ = formsService.searchInput$;
   }
@@ -53,6 +48,11 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
     if (this.paginator && this.sort) {
       // Combine everything that affects the rendered data into one update
       // stream for the data-table to consume.
+      this.forInvoiceItemsSubscription =
+        this.firestoreService.dispatchForInvoiceItems$.subscribe((data) => {
+          console.log('data: ', data);
+          this.data = data;
+        });
 
       return merge(
         this.firestoreService.dispatchForInvoiceItems$,
