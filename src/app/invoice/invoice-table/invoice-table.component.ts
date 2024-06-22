@@ -3,13 +3,11 @@ import { MatTableModule, MatTable } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { InvoiceTableDataSource } from './invoice-table-datasource';
-import {
-  DispatchModel,
-  FirestoreService,
-} from '../../services/firestore.service';
+import { DispatchModel } from '../../services/firestore.service';
 import { CommonModule } from '@angular/common';
 import { SearchEntryComponent } from '../../forms/search-entry/search-entry.component';
 import { FormsService } from '../../forms/forms.service';
+import { DashboardService } from '../../dashboard/dashboard.service';
 
 @Component({
   selector: 'app-invoice-table',
@@ -31,13 +29,12 @@ export class InvoiceTableComponent implements AfterViewInit {
   dataSource: any;
 
   constructor(
-    private firestoreService: FirestoreService,
-    private formsService: FormsService
+    private formsService: FormsService,
+    private dashboardService: DashboardService
   ) {
-    //need caching or else, it will always submit query to server
     this.dataSource = new InvoiceTableDataSource(
-      this.firestoreService,
-      this.formsService
+      this.formsService,
+      this.dashboardService
     );
   }
 

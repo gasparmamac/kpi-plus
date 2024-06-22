@@ -1,18 +1,11 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { filter, map } from 'rxjs/operators';
-import { Observable, of as observableOf, merge, Subscription } from 'rxjs';
-import {
-  DispatchModel,
-  FirestoreService,
-} from '../../services/firestore.service';
+import { Observable, merge, Subscription, map } from 'rxjs';
+import { DispatchModel } from '../../services/firestore.service';
 import { Timestamp } from '@angular/fire/firestore';
 import { FormsService } from '../../forms/forms.service';
-
-// TODO: Replace this with your own data model type
-// TODO: replace this with real data from your application
-const DATA: DispatchModel[] = [];
+import { DashboardService } from '../../dashboard/dashboard.service';
 
 /**
  * Data source for the InvoiceTable view. This class should
@@ -20,23 +13,27 @@ const DATA: DispatchModel[] = [];
  * (including sorting, pagination, and filtering).
  */
 export class InvoiceTableDataSource extends DataSource<DispatchModel> {
-  data: DispatchModel[] = DATA;
+  data!: DispatchModel[];
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
 
-  searchInputSubscription = new Subscription();
-  searchInput$;
-
-  private forInvoiceItemsSubscription = new Subscription();
+  subscriptions = new Subscription();
+  searchInput$!: Observable<string>;
 
   constructor(
-    private firestoreService: FirestoreService,
-    private formsService: FormsService
+    private formsService: FormsService,
+    private dashboardService: DashboardService
   ) {
     super();
-    this.firestoreService.loadDispatchForInvoice();
+    const subscription1 = this.dashboardService.noOrItems$.subscribe(
+      (items) => {
+        this.data = items;
+        console.log('this data: ', this.data);
+      }
+    );
 
     this.searchInput$ = formsService.searchInput$;
+    this.subscriptions.add(subscription1);
   }
 
   /**
@@ -48,14 +45,9 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
     if (this.paginator && this.sort) {
       // Combine everything that affects the rendered data into one update
       // stream for the data-table to consume.
-      this.forInvoiceItemsSubscription =
-        this.firestoreService.dispatchForInvoiceItems$.subscribe((data) => {
-          console.log('data: ', data);
-          this.data = data;
-        });
-
       return merge(
-        this.firestoreService.dispatchForInvoiceItems$,
+        this.dashboardService.noOrItems$,
+        this.dashboardService.noPaymentItems$,
         this.formsService.searchInput$,
         this.paginator.page,
         this.sort.sortChange
@@ -75,13 +67,14 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
 
   private getFilteredData(data: DispatchModel[]): DispatchModel[] {
     let filteredData: DispatchModel[] = [];
-    this.searchInputSubscription = this.formsService.searchInput$.subscribe(
+    const subscription2 = this.formsService.searchInput$.subscribe(
       (filterValue) => {
         filteredData = data.filter((item) =>
           this.matchesFilter(item, filterValue)
         );
       }
     );
+    this.subscriptions.add(subscription2);
     return filteredData;
   }
 
@@ -98,8 +91,7 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
    * any open connections or free any held resources that were set up during connect.
    */
   disconnect(): void {
-    this.forInvoiceItemsSubscription.unsubscribe();
-    this.searchInputSubscription.unsubscribe();
+    this.subscriptions.unsubscribe();
   }
 
   /**
