@@ -1,139 +1,27 @@
 import { Injectable, OnDestroy, OnInit } from '@angular/core';
-import { DispatchModel, FirestoreService } from '../services/firestore.service';
-import { BehaviorSubject } from 'rxjs';
+import { DashboardService } from '../dashboard/dashboard.service';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { DispatchModel } from '../services/firestore.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class DispatchService implements OnInit, OnDestroy {
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-  private showTableSubject = new BehaviorSubject<boolean>(false);
-  private dispatchItemsSubject = new BehaviorSubject<DispatchModel[]>([]);
-  private feedbackMsgSubject = new BehaviorSubject<string>(
-    '--- no query to display ---'
-  );
-  public filterValueSubject = new BehaviorSubject<string>('');
+export class DispatchService implements OnDestroy {
+  noInvNoPayrollSubject = new BehaviorSubject<DispatchModel[]>([]);
+  noPayrollItemsSubject = new BehaviorSubject<DispatchModel[]>([]);
 
-  loading$ = this.loadingSubject.asObservable();
-  showTable$ = this.showTableSubject.asObservable();
-  dispatchItems$ = this.dispatchItemsSubject.asObservable();
-  feedbackMsg$ = this.feedbackMsgSubject.asObservable();
+  noInvNoPayroll$ = this.noInvNoPayrollSubject.asObservable();
+  noPayrollItems$ = this.noPayrollItemsSubject.asObservable();
+  subscription = new Subscription();
 
-  private cacheObj: { [key: string]: DispatchModel[] } = {};
-  private filterValue$ = this.filterValueSubject.asObservable();
-
-  constructor(private firestoreService: FirestoreService) {}
-  ngOnInit(): void {}
-  ngOnDestroy(): void {
-    if (this.filterValueSubject) this.filterValueSubject.unsubscribe();
-  }
-
-  private setShowTable(cacheObj: object) {
-    const keyArr = Object.keys(cacheObj);
-    if (keyArr.length === 0) {
-      this.feedbackMsgSubject.next('--- no found data ---');
-      this.showTableSubject.next(false);
-    } else {
-      this.showTableSubject.next(true);
-    }
-  }
-
-  async getDispatchItems() {
-    this.loadingSubject.next(true);
-    this.filterValue$.subscribe(async (filterValue) => {
-      // check if query is cached. return cache array if true. else go to firestore
-      if (this.cacheObj.hasOwnProperty(filterValue)) {
-        this.dispatchItemsSubject.next(this.cacheObj[filterValue]);
-        this.setShowTable(this.cacheObj[filterValue]);
-        this.loadingSubject.next(false);
-      } else {
-        try {
-          this.cacheObj[filterValue] = await this.firestoreService
-            .readDocsByQuery(filterValue, 'dispatch')
-            .then((snapshot) =>
-              snapshot.docs.map((doc) => {
-                const data = doc.data();
-                if (data['disp_date']) {
-                  data['disp_date'] = data['disp_date'].toDate();
-                }
-                if (data['inv_date']) {
-                  data['inv_date'] = data['inv_date'].toDate();
-                }
-                if (data['or_date']) {
-                  data['or_date'] = data['or_date'].toDate();
-                }
-                if (data['payroll_date']) {
-                  data['payroll_date'] = data['payroll_date'].toDate();
-                }
-                const updatedData = { ...data, id: doc.id };
-                return updatedData as DispatchModel;
-              })
-            );
-
-          this.dispatchItemsSubject.next(this.cacheObj[filterValue]);
-          this.setShowTable(this.cacheObj[filterValue]);
-          this.loadingSubject.next(false);
-        } catch (error) {
-          this.loadingSubject.next(false);
-          console.log('Error occured in fetching dispatch items: ', error);
-        }
-      }
+  constructor(private dashboardService: DashboardService) {
+    const subs1 = this.dashboardService.noPayrollItems$.subscribe((items) => {
+      this.noPayrollItemsSubject.next(items);
     });
+
+    const sub2 = dashboardService.noInvNoPayrollItems$.subscribe((items) => {});
+    this.subscription.add(subs1);
   }
 
-  async addDispatchItem(dispatchFormData: DispatchModel) {
-    this.loadingSubject.next(true);
-    try {
-      await this.firestoreService
-        .createDoc('dispatch', dispatchFormData)
-        .then((createdDoc) => {
-          const id = createdDoc.id;
-          // add the added dispatch to each cache item
-          const addedDispatchItem = { ...dispatchFormData, id: id };
-          Object.keys(this.cacheObj).map((key) => {
-            this.cacheObj[key] = [...this.cacheObj[key], addedDispatchItem];
-          });
-        });
-
-      this.loadingSubject.next(false);
-    } catch (error) {
-      this.loadingSubject.next(false);
-      console.log('Error in adding dispatch item: ', error);
-    }
-  }
-
-  async deleteDispatch(id: string) {
-    this.loadingSubject.next(true);
-    try {
-      await this.firestoreService
-        .deleteDoc('dispatch', id)
-        .then(() => {
-          // remove the deleted dispatch on cache item
-          Object.keys(this.cacheObj).map((key) => {
-            const newArr = this.cacheObj[key].filter((item) => item.id !== id);
-            console.log(newArr);
-            this.cacheObj[key] = newArr;
-          });
-        })
-        .then(() => this.getDispatchItems());
-    } catch (error) {
-      this.loadingSubject.next(false);
-      console.log('Error in deleting dispatch item: ', error);
-    }
-  }
-
-  async updateDispatch(id: string, editDispatchFormData: DispatchModel) {
-    this.loadingSubject.next(true);
-    try {
-      await this.firestoreService
-        .updateDoc('dispatch', id, editDispatchFormData)
-        .then(() => {
-          // reset cache object
-          this.cacheObj = {};
-          this.loadingSubject.next(false);
-        });
-    } catch (error) {
-      console.log('Error updating dispatch: ', error);
-    }
-  }
+  ngOnDestroy(): void {}
 }
