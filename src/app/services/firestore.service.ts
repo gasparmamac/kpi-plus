@@ -206,7 +206,7 @@ export class FirestoreService {
     ) as Observable<DispatchModel[]>;
   }
 
-  // for dashboard
+  // for dashboard - no O.R.
   noOrQuery(): Observable<DispatchModel[]> {
     const collectionName = 'dispatch';
     const firestore = this.firestore;
@@ -223,7 +223,7 @@ export class FirestoreService {
     return this.getDataStream(noOrQueryBuild);
   }
 
-  // for dashboard
+  // for dashboard - no Payroll
   noPayrollQuery(): Observable<DispatchModel[]> {
     const collectionName = 'dispatch';
     const firestore = this.firestore;
