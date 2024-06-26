@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterOutlet } from '@angular/router';
 
 @Component({

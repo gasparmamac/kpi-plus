@@ -13,14 +13,12 @@ export class DispatchService implements OnDestroy {
   noInvNoPayroll$ = this.noInvNoPayrollSubject.asObservable();
   noPayrollItems$ = this.noPayrollItemsSubject.asObservable();
   subscription = new Subscription();
+  loading$: any;
 
   constructor(private dashboardService: DashboardService) {
     const subs1 = this.dashboardService.noPayrollItems$.subscribe((items) => {
       this.noPayrollItemsSubject.next(items);
     });
-
-    const sub2 = dashboardService.noInvNoPayrollItems$.subscribe((items) => {});
-    this.subscription.add(subs1);
   }
 
   ngOnDestroy(): void {}

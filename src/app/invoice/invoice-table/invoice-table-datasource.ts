@@ -28,7 +28,7 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
     const subscription1 = this.dashboardService.noOrItems$.subscribe(
       (items) => {
         this.data = items;
-        console.log('this data: ', this.data);
+        console.log('invoice no OR: ', items);
       }
     );
 
@@ -47,7 +47,7 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
       // stream for the data-table to consume.
       return merge(
         this.dashboardService.noOrItems$,
-        this.dashboardService.noPaymentItems$,
+        this.dashboardService.noPayrollItems$,
         this.formsService.searchInput$,
         this.paginator.page,
         this.sort.sortChange

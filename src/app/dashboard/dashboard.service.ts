@@ -53,6 +53,8 @@ export class DashboardService implements OnDestroy {
           this.noInVNoOrSubject.next(noInvNoOr);
           this.noInvNoPayrollSubject.next(noInvNoPayroll);
           this.noInvAggSubject.next(noInvAgg);
+          console.log('dashboard no OR:  ', noOr);
+          console.log('dashboard no Payroll:  ', noPayroll);
         })
       )
       .subscribe();

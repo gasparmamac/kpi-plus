@@ -31,6 +31,6 @@ export class DispatchFormDialogComponent {
     this.router.navigate(['/menu/dispatch/table']);
   }
   onYes() {
-    this.dispatchService.addDispatchItem(this.data);
+    // this.dispatchService.addDispatchItem(this.data);
   }
 }

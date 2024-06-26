@@ -35,7 +35,7 @@ export class DispatchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadingSubscription = this.dispatchService.loading$.subscribe(
-      (loading) => (this.loading = loading)
+      (loading: boolean) => (this.loading = loading)
     );
   }
 

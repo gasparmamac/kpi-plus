@@ -22,7 +22,7 @@ export class DispatchDetailViewComponent {
   ) {}
 
   onDelete(id: string) {
-    this.dispatchService.deleteDispatch(id);
+    // this.dispatchService.deleteDispatch(id);
   }
 
   onEdit(element: DispatchModel) {

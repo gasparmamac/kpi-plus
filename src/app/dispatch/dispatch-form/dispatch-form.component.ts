@@ -83,12 +83,12 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.loadingSubscription = this.dispatchService.loading$.subscribe(
-      (loadingStatus) => {
-        this.loading = loadingStatus;
-        this.completed = loadingStatus!;
-      }
-    );
+    // this.loadingSubscription = this.dispatchService.loading$.subscribe(
+    //   (loadingStatus) => {
+    //     this.loading = loadingStatus;
+    //     this.completed = loadingStatus!;
+    //   }
+    // );
 
     this.stepperOrientation = this.breakpointObserver
       .observe('(min-width: 800px)')
@@ -251,26 +251,26 @@ export class DispatchFormComponent implements OnInit, OnDestroy, AfterViewInit {
       ...this.payrollForm.value,
       ...this.orForm.value,
     };
-    switch (this.formMode) {
-      case 'edit':
-        if (this.element) {
-          if (this.element.id) {
-            const id = this.element.id;
-            this.dispatchService
-              .updateDispatch(id, formValues)
-              .then(() => this.dispatchStepper.next());
-          } else {
-            console.log('Error updating dispatch: No ID');
-          }
-        } else {
-          console.log('Error updating dispatch: No Element');
-        }
-        break;
-      default: //formMode === add
-        this.dispatchService
-          .addDispatchItem(formValues)
-          .then(() => this.dispatchStepper.next());
-    }
+    // switch (this.formMode) {
+    //   case 'edit':
+    //     if (this.element) {
+    //       if (this.element.id) {
+    //         const id = this.element.id;
+    //         this.dispatchService
+    //           .updateDispatch(id, formValues)
+    //           .then(() => this.dispatchStepper.next());
+    //       } else {
+    //         console.log('Error updating dispatch: No ID');
+    //       }
+    //     } else {
+    //       console.log('Error updating dispatch: No Element');
+    //     }
+    //     break;
+    //   default: //formMode === add
+    //     this.dispatchService
+    //       .addDispatchItem(formValues)
+    //       .then(() => this.dispatchStepper.next());
+    // }
   }
 
   onNo(formMode: string) {

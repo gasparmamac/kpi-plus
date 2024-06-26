@@ -16,7 +16,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
-import { DispatchFilterFormComponent } from '../dispatch-filter-form/dispatch-filter-form.component';
 import { DispatchService } from '../dispatch.service';
 import { Observable, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -53,8 +52,6 @@ import { DispatchModel } from '../../services/firestore.service';
     MatProgressBarModule,
     ReactiveFormsModule,
     RouterModule,
-
-    DispatchFilterFormComponent,
     DispatchDetailViewComponent,
   ],
   animations: [
@@ -115,19 +112,19 @@ export class DispatchTableComponent
   ) {}
 
   ngOnInit(): void {
-    this.dispatchService.getDispatchItems();
-    this.loading$ = this.dispatchService.loading$;
-    this.feedbackMsg$ = this.dispatchService.feedbackMsg$;
-    this.showTableSubscription = this.dispatchService.showTable$.subscribe(
-      (status) => {
-        this.showTable = status;
-      }
-    );
-    this.dataSubscription = this.dispatchService.dispatchItems$.subscribe(
-      (data) => {
-        this.dataSource.data = data;
-      }
-    );
+    // this.dispatchService.getDispatchItems();
+    // this.loading$ = this.dispatchService.loading$;
+    // this.feedbackMsg$ = this.dispatchService.feedbackMsg$;
+    // this.showTableSubscription = this.dispatchService.showTable$.subscribe(
+    //   (status) => {
+    //     this.showTable = status;
+    //   }
+    // );
+    // this.dataSubscription = this.dispatchService.dispatchItems$.subscribe(
+    //   (data) => {
+    //     this.dataSource.data = data;
+    //   }
+    // );
   }
   ngOnDestroy(): void {
     this.dataSubscription.unsubscribe();
