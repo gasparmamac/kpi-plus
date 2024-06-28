@@ -11,9 +11,10 @@ import { DispatchModel } from '../../services/firestore.service';
   styleUrl: './edit-dispatch.component.css',
 })
 export class EditDispatchComponent implements OnInit {
-  formMode = 'edit';
+  formMode = 'edit-dispatch';
   element!: DispatchModel;
   elementId!: string | null;
+
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {
     const navigation = this.router.getCurrentNavigation();
     this.element = navigation?.extras.state?.['element'];

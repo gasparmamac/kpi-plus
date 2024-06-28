@@ -1,0 +1,99 @@
+<div class="mat-elevation-z8">
+  <div class="overflow-x-auto">
+    <table
+      mat-table
+      multiTemplateDataRows
+      class="min-w-full"
+      matSort
+      aria-label="Elements"
+    >
+      @for(column of displayedColumns; track column ){
+      <ng-container matColumnDef="{{ column }}">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          [mat-sort-header]="column === 'disp_slip' ? 'disp_slip' : ''"
+        >
+          {{ column.toUpperCase() }}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            column.includes("_date")
+              ? (element[column] | date : "shortDate")
+              : column.includes("odo_")
+              ? (element[column] | number)
+              : column.includes("rate")
+              ? (element[column] | currency : "PHP" : "symbol" : "1.2")
+              : element[column]
+          }}
+        </td>
+      </ng-container>
+      }
+
+      <ng-container matColumnDef="expand">
+        <th mat-header-cell *matHeaderCellDef aria-label="row actions">
+          &nbsp;
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <button
+            mat-icon-button
+            aria-label="expand row"
+            (click)="
+              expandedElement = expandedElement === element ? null : element;
+              $event.stopPropagation()
+            "
+          >
+            @if (expandedElement === element) {
+            <mat-icon>keyboard_arrow_up</mat-icon>
+            } @else {
+            <mat-icon>keyboard_arrow_down</mat-icon>
+            }
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+      <ng-container matColumnDef="expandedDetail">
+        <td
+          mat-cell
+          *matCellDef="let element"
+          [attr.colspan]="displayedColumnsWithExpand.length"
+        >
+          <div
+            class="example-element-detail bg-blue-50"
+            [@detailExpand]="
+              element == expandedElement ? 'expanded' : 'collapsed'
+            "
+          >
+            <app-dispatch-item-details
+              [element]="element"
+            ></app-dispatch-item-details>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsWithExpand"></tr>
+      <tr
+        mat-row
+        *matRowDef="let element; columns: displayedColumnsWithExpand"
+        class="example-element-row"
+        [class.example-expanded-row]="expandedElement === element"
+        (click)="expandedElement = expandedElement === element ? null : element"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['expandedDetail']"
+        class="example-detail-row"
+      ></tr>
+    </table>
+  </div>
+  <mat-paginator
+    #paginator
+    [length]="dataSource.data.length"
+    [pageIndex]="0"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]"
+    aria-label="Select page"
+  >
+  </mat-paginator>
+</div>

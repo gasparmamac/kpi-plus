@@ -6,6 +6,8 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router, RouterModule } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { DispatchService } from './dispatch.service';
+import { DispatchTableComponent } from '../tables/dispatch-table/dispatch-table.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dispatch',
@@ -16,31 +18,31 @@ import { DispatchService } from './dispatch.service';
     MatIconModule,
     MatButtonModule,
     MatProgressBar,
+    MatSnackBarModule,
+
+    DispatchTableComponent,
   ],
   templateUrl: './dispatch.component.html',
   styleUrl: './dispatch.component.css',
 })
 export class DispatchComponent implements OnInit, OnDestroy {
   title = 'Dispatch Table';
-  loadingSubscription = new Subscription();
-  loading: boolean = false;
+  loading$!: Observable<boolean>;
+  querying$!: Observable<boolean>;
 
   constructor(
     private router: Router,
     private dispatchService: DispatchService
   ) {}
-  ngOnDestroy(): void {
-    this.loadingSubscription.unsubscribe();
-  }
+
+  ngOnDestroy(): void {}
 
   ngOnInit(): void {
-    this.loadingSubscription = this.dispatchService.loading$.subscribe(
-      (loading: boolean) => (this.loading = loading)
-    );
+    this.loading$ = this.dispatchService.loading$;
+    this.querying$ = this.dispatchService.querying$;
   }
 
   onAdd() {
-    console.log('Addiing');
     this.router.navigate(['/menu/dispatch/edit-dispatch']);
   }
 }

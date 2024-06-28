@@ -22,7 +22,7 @@ import {
   updateDoc,
   where,
 } from '@angular/fire/firestore';
-import { Observable, catchError, map } from 'rxjs';
+import { Observable, catchError, from, map } from 'rxjs';
 
 // dispatch item data model
 export interface DispatchModel {
@@ -43,11 +43,20 @@ export interface DispatchModel {
   extra_helper: string | null;
   odo_start: number;
   odo_end: number;
+  fuel_date: Date | Timestamp | null | string;
+  fuel_or: string | null;
+  fuel_amt: number | null;
+  fuel_item: string | null;
+  disp_encoder: string;
+  disp_encoded_date: Date | Timestamp;
 
   wd_type: string | null;
   disp_rate: number | null;
   inv_date: Date | Timestamp | null | string;
   inv_no: string | null;
+  inv_encoder: string;
+  inv_encoded_date: Date | Timestamp;
+
   payroll_date: Date | Timestamp | null;
   payroll_no: string | null;
 
@@ -69,9 +78,9 @@ export class FirestoreService {
   createDoc(
     collectionName = 'dispatch',
     data: DispatchModel
-  ): Promise<DocumentReference> {
+  ): Observable<DocumentReference> {
     const collectionReference = collection(this.firestore, collectionName);
-    return addDoc(collectionReference, data);
+    return from(addDoc(collectionReference, data));
   }
 
   // Create a document by ID -> creates non-existing data, overwrites the field otherwise.

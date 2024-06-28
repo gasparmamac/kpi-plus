@@ -23,8 +23,8 @@ export const NAVIGATION_ROUTES = {
         {
           path: 'table',
           loadComponent: () =>
-            import('../dispatch/dispatch-table/dispatch-table.component').then(
-              (m) => m.DispatchTableComponent
+            import('../dispatch/dispatch-list/dispatch-list.component').then(
+              (m) => m.DispatchListComponent
             ),
         },
         {

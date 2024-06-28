@@ -12,10 +12,9 @@
       <a mat-list-item routerLink="dashboard">Dashboard</a>
       <a mat-list-item routerLink="dispatch/table">Dispatch</a>
       <a mat-list-item routerLink="invoice">Invoice</a>
-
-      <!-- <button (click)="logout()" mat-list-item href="#">Logout</button> -->
     </mat-nav-list>
   </mat-sidenav>
+
   <mat-sidenav-content>
     <mat-toolbar color="primary">
       @if (isHandset$ | async) {
@@ -30,6 +29,16 @@
       }
       <span>kpi-plus</span>
     </mat-toolbar>
+    <div class="fixed top-15 left-0 w-full z-500">
+      <mat-progress-bar
+        *ngIf="isLoading$ | async"
+        mode="indeterminate"
+      ></mat-progress-bar>
+      <mat-progress-bar
+        *ngIf="isQuerying$ | async"
+        mode="query"
+      ></mat-progress-bar>
+    </div>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

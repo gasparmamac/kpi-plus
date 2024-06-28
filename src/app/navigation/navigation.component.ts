@@ -11,7 +11,8 @@ import { map, shareReplay } from 'rxjs/operators';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { CommonService } from '../services/common.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { DispatchService } from '../dispatch/dispatch.service';
 
 @Component({
   selector: 'app-navigation',
@@ -25,20 +26,26 @@ import { CommonService } from '../services/common.service';
     MatSidenavModule,
     MatListModule,
     MatIconModule,
+    MatProgressBarModule,
     AsyncPipe,
     DashboardComponent,
     RouterModule,
   ],
 })
 export class NavigationComponent implements OnInit, OnDestroy {
-  constructor(private authService: AuthService) {}
+  isLoading$;
+  isQuerying$;
+  constructor(
+    private authService: AuthService,
+    private dispatchService: DispatchService
+  ) {
+    this.isLoading$ = dispatchService.loading$;
+    this.isQuerying$ = dispatchService.querying$;
+  }
 
   ngOnInit(): void {}
   ngOnDestroy(): void {}
 
-  logout() {
-    this.authService.logout();
-  }
   private breakpointObserver = inject(BreakpointObserver);
 
   isHandset$: Observable<boolean> = this.breakpointObserver

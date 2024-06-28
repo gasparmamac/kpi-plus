@@ -1,18 +1,19 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { Observable, merge, Subscription, map } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Observable, of as observableOf, merge, Subscription } from 'rxjs';
 import { DispatchModel } from '../../services/firestore.service';
-import { Timestamp } from '@angular/fire/firestore';
 import { FormsService } from '../../forms/forms.service';
 import { DashboardService } from '../../dashboard/dashboard.service';
+import { Timestamp } from '@angular/fire/firestore';
 
 /**
- * Data source for the InvoiceTable view. This class should
+ * Data source for the DispatchTable view. This class should
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class InvoiceTableDataSource extends DataSource<DispatchModel> {
+export class DispatchTableDataSource extends DataSource<DispatchModel> {
   data!: DispatchModel[];
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
@@ -25,10 +26,10 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
     private dashboardService: DashboardService
   ) {
     super();
-    const subscription1 = this.dashboardService.noOrItems$.subscribe(
+    const subscription1 = this.dashboardService.noPayrollItems$.subscribe(
       (items) => {
         this.data = items;
-        console.log('invoice no OR: ', this.data);
+        console.log('dispatch no payroll: ', this.data);
       }
     );
 
@@ -46,16 +47,12 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
       // Combine everything that affects the rendered data into one update
       // stream for the data-table to consume.
       return merge(
-        this.dashboardService.noOrItems$,
         this.dashboardService.noPayrollItems$,
-        this.formsService.searchInput$,
         this.paginator.page,
         this.sort.sortChange
       ).pipe(
         map(() => {
-          const filteredData = this.getFilteredData(this.data);
-          const sortedData = this.getSortedData(filteredData);
-          return this.getPagedData(sortedData);
+          return this.getPagedData(this.getSortedData([...this.data]));
         })
       );
     } else {
@@ -65,34 +62,11 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
     }
   }
 
-  private getFilteredData(data: DispatchModel[]): DispatchModel[] {
-    let filteredData: DispatchModel[] = [];
-    const subscription2 = this.formsService.searchInput$.subscribe(
-      (filterValue) => {
-        filteredData = data.filter((item) =>
-          this.matchesFilter(item, filterValue)
-        );
-      }
-    );
-    this.subscriptions.add(subscription2);
-    return filteredData;
-  }
-
-  private matchesFilter(item: DispatchModel, filterValue: string): unknown {
-    return (
-      item.disp_slip.toLowerCase().includes(filterValue) ||
-      item.plate_no.toLowerCase().includes(filterValue) ||
-      item.destination.toLowerCase().includes(filterValue)
-    );
-  }
-
   /**
    *  Called when the table is being destroyed. Use this function, to clean up
    * any open connections or free any held resources that were set up during connect.
    */
-  disconnect(): void {
-    this.subscriptions.unsubscribe();
-  }
+  disconnect(): void {}
 
   /**
    * Paginate the data (client-side). If you're using server-side pagination,

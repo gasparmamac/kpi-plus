@@ -1,0 +1,581 @@
+<mat-stepper #stepper [orientation]="(stepperOrientation | async)!" linear>
+  <ng-container
+    *ngIf="formMode === 'add-dispatch' || formMode === 'edit-dispatch'"
+  >
+    <!--! dispatch step -->
+    <mat-step [stepControl]="dispatchForm">
+      <form [formGroup]="dispatchForm" class="">
+        <ng-template matStepLabel>Dispatch</ng-template>
+        <!-- disp date -->
+        <mat-form-field class="w-full">
+          <mat-label>Dispatch date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            placeholder="MM/DD/YYYY"
+            formControlName="disp_date"
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          @if (dispatchForm.controls['disp_date']?.hasError('required')) {
+          <mat-error>Dispatch date is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- disp Disp_slip -->
+        <mat-form-field class="w-full">
+          <mat-label>Dispatch slip no.</mat-label>
+          <input
+            matInput
+            placeholder="ex.0158956"
+            formControlName="disp_slip"
+          />
+          @if (dispatchForm.controls['disp_slip']?.hasError('required')) {
+          <mat-error>Dispatch slip is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- route -->
+        <mat-form-field class="w-full">
+          <mat-label>Route</mat-label>
+          <mat-select formControlName="route">
+            @for (state of routes; track state) {
+            <mat-option [value]="state.abbreviation">{{
+              state.name
+            }}</mat-option>
+            }
+          </mat-select>
+          @if (dispatchForm.controls['route']?.hasError('required')) {
+          <mat-error>Route is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- odz route -->
+        @if(dispatchForm.controls['route'].value == 'ODZ'){
+        <mat-form-field class="w-full">
+          <mat-label>ODZ route</mat-label>
+          <input
+            matInput
+            placeholder="ex. Panabo, Cagayan etc."
+            formControlName="odz_route"
+          />
+          @if (dispatchForm.controls['odz_route']?.hasError('required')) {
+          <mat-error>ODZ Route is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        }
+        <!-- destination -->
+        <mat-form-field class="w-full">
+          <mat-label>Destination</mat-label>
+          <input
+            matInput
+            placeholder="ex. Matina, Maa, Ecoland etc."
+            formControlName="destination"
+          />
+          @if (dispatchForm.controls['destination']?.hasError('required')) {
+          <mat-error>Destination is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- cbm -->
+        <mat-form-field class="w-full">
+          <mat-label>CBM</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="cbm"
+            placeholder="ex. 4.5"
+          />
+          @if (dispatchForm.controls['cbm']?.hasError('required')) {
+          <mat-error>CBM is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- drops -->
+        <mat-form-field class="w-full">
+          <mat-label>Drops</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="drops"
+            placeholder="ex. 45"
+          />
+          @if (dispatchForm.controls['drops']?.hasError('required')) {
+          <mat-error>Drops is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- Qty -->
+        <mat-form-field class="w-full">
+          <mat-label>Quantity</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="qty"
+            placeholder="ex. 50"
+          />
+          @if (dispatchForm.controls['qty']?.hasError('required')) {
+          <mat-error>Quantity is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <button mat-button color="primary" matStepperNext>Next</button>
+      </form>
+    </mat-step>
+    <!--! Unit step -->
+    <mat-step [stepControl]="deliveryUnitForm">
+      <form [formGroup]="deliveryUnitForm" class="">
+        <ng-template matStepLabel>Unit</ng-template>
+        <!-- plate no -->
+        <mat-form-field class="w-full">
+          <mat-label>Plate no</mat-label>
+          <mat-select formControlName="plate_no">
+            @for (state of plate_nos; track state) {
+            <mat-option [value]="state.abbreviation">{{
+              state.name
+            }}</mat-option>
+            }
+          </mat-select>
+          @if (deliveryUnitForm.controls['plate_no']?.hasError('required')) {
+          <mat-error>Plate no is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- backup plate no -->
+        @if(deliveryUnitForm.controls['plate_no'].value == 'BAC'){
+        <mat-form-field class="w-full">
+          <mat-label>Backup plate no</mat-label>
+          <input type="text" matInput formControlName="backup_plate_no" />
+          @if
+          (deliveryUnitForm.controls['backup_plate_no']?.hasError('required')) {
+          <mat-error>Backup plate no is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        }
+        <!-- driver -->
+        <mat-form-field class="w-full">
+          <mat-label>Driver</mat-label>
+          <mat-select formControlName="driver">
+            @for (state of drivers; track state) {
+            <mat-option [value]="state.abbreviation">{{
+              state.name
+            }}</mat-option>
+            }
+          </mat-select>
+          @if (deliveryUnitForm.controls['driver']?.hasError('required')) {
+          <mat-error>Driver is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- extra driver  -->
+        @if(deliveryUnitForm.controls['driver'].value == 'EXD'){
+        <mat-form-field class="w-full">
+          <mat-label>Extra driver</mat-label>
+          <input
+            matInput
+            placeholder="ex. Juan Pablo"
+            formControlName="extra_driver"
+          />
+          @if (deliveryUnitForm.controls['backup_driver']?.hasError('required'))
+          {
+          <mat-error>Backup driver is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        }
+        <!-- helper -->
+        <mat-form-field class="w-full">
+          <mat-label>Helper</mat-label>
+          <mat-select formControlName="helper">
+            @for (state of helpers; track state) {
+            <mat-option [value]="state.abbreviation">{{
+              state.name
+            }}</mat-option>
+            }
+          </mat-select>
+          @if (deliveryUnitForm.controls['helper']?.hasError('required')) {
+          <mat-error>Helper is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- extra helper -->
+        @if(deliveryUnitForm.controls['helper'].value == 'EXH'){
+        <mat-form-field class="w-full">
+          <mat-label>Extra helper</mat-label>
+          <input
+            matInput
+            placeholder="ex. Juan Pablo"
+            formControlName="extra_helper"
+          />
+          @if (deliveryUnitForm.controls['extra_helper']?.hasError('required'))
+          {
+          <mat-error>Extra helper is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        }
+        <!-- odo start -->
+        <mat-form-field class="w-full">
+          <mat-label>Odo start</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="odo_start"
+            placeholder="ex. 50100"
+          />
+          @if (deliveryUnitForm.controls['odo_start']?.hasError('required')) {
+          <mat-error>Odo start is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- odo end  -->
+        <mat-form-field class="w-full">
+          <mat-label>Odo end</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="odo_end"
+            placeholder="ex. 50150"
+          />
+          @if (deliveryUnitForm.controls['odo_end']?.hasError('required')) {
+          <mat-error>Odo end is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <button mat-button color="primary" matStepperPrevious>Previous</button>
+        <button mat-button color="primary" matStepperNext>Next</button>
+      </form>
+    </mat-step>
+    <!--! Fuel Step -->
+    <mat-step [stepControl]="fuelForm">
+      <form [formGroup]="fuelForm">
+        <ng-template matStepLabel>Fuel</ng-template>
+        <!-- fuel date -->
+        <ng-container *ngIf="!isChecked">
+          <mat-form-field class="w-full">
+            <mat-label>Fuel date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker5"
+              placeholder="MM/DD/YYYY"
+              formControlName="fuel_date"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker5"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker5></mat-datepicker>
+            @if (fuelForm.controls['fuel_date']?.hasError('required')) {
+            <mat-error>Fuel date is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <!-- fuel O.R. -->
+          <mat-form-field class="w-full">
+            <mat-label>Fuel O.R.</mat-label>
+            <input
+              matInput
+              placeholder="ex.0158956"
+              formControlName="fuel_or"
+            />
+            @if (fuelForm.controls['fuel_or']?.hasError('required')) {
+            <mat-error>Fuel O.R. is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <!-- fuel item -->
+          <mat-form-field class="w-full">
+            <mat-label>Fuel item</mat-label>
+            <input
+              matInput
+              placeholder="ex. diesel, break fluid"
+              formControlName="fuel_item"
+            />
+            @if (fuelForm.controls['fuel_item']?.hasError('required')) {
+            <mat-error>Fuel item is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+          <!-- fuel amount -->
+          <mat-form-field class="w-full">
+            <mat-label>Fuel amount</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="fuel_amt"
+              placeholder="ex. 1,234.5"
+            />
+            @if (invoiceForm.controls['fuel']?.hasError('required')) {
+            <mat-error>Fuel amount is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+        </ng-container>
+        <button mat-button color="primary" matStepperPrevious>Previous</button>
+        <button mat-button color="primary" matStepperNext>Next</button>
+      </form>
+      <mat-checkbox [checked]="isChecked" (change)="onCheckboxChange($event)"
+        >No fuel receipt</mat-checkbox
+      >
+    </mat-step>
+  </ng-container>
+
+  <ng-container
+    *ngIf="formMode === 'add-invoice' || formMode === 'edit-invoice'"
+  >
+    <!--! invoice step -->
+    <mat-step [stepControl]="invoiceForm">
+      <form [formGroup]="invoiceForm">
+        <ng-template matStepLabel>Invoice</ng-template>
+        <!-- wd type -->
+        <mat-form-field class="w-full">
+          <mat-label>Workday type</mat-label>
+          <mat-select formControlName="wd_type">
+            @for (state of wd_types; track state) {
+            <mat-option [value]="state.abbreviation">{{
+              state.name
+            }}</mat-option>
+            }
+          </mat-select>
+          @if (invoiceForm.controls['wd_type']?.hasError('required')) {
+          <mat-error>Workday type is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- disp rate -->
+        <mat-form-field class="w-full">
+          <mat-label>Dispatch rate</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="disp_rate"
+            placeholder="ex. 2500.50"
+          />
+          @if (invoiceForm.controls['disp_rate']?.hasError('required')) {
+          <mat-error>Dispatch rate is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- inv date -->
+        <mat-form-field class="w-full">
+          <mat-label>Invoice date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker2"
+            placeholder="MM/DD/YYYY"
+            formControlName="inv_date"
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker2"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+          @if (invoiceForm.controls['inv_date']?.hasError('required')) {
+          <mat-error>Invoice date is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- inv no -->
+        <mat-form-field class="w-full">
+          <mat-label>Invoice no.</mat-label>
+          <input matInput placeholder="ex.0158956" formControlName="inv_no" />
+          @if (invoiceForm.controls['inv_no']?.hasError('required')) {
+          <mat-error>Invoice number is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <button mat-button color="primary" matStepperPrevious>Previous</button>
+        <button mat-button color="primary" matStepperNext>Next</button>
+      </form>
+    </mat-step>
+  </ng-container>
+
+  <ng-container
+    *ngIf="formMode === 'add-payroll' || formMode === 'edit-payroll'"
+  >
+    <!--! payroll step -->
+    <mat-step [stepControl]="payrollForm">
+      <form [formGroup]="payrollForm">
+        <ng-template matStepLabel>Payroll</ng-template>
+        <!-- payroll date -->
+        <mat-form-field class="w-full">
+          <mat-label>Payroll date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker3"
+            placeholder="MM/DD/YYYY"
+            formControlName="payroll_date"
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker3"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker3></mat-datepicker>
+          @if (payrollForm.controls['payroll_date']?.hasError('required')) {
+          <mat-error>Payroll date is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <!-- payroll no -->
+        <mat-form-field class="w-full">
+          <mat-label>Payroll no.</mat-label>
+          <input matInput placeholder="ex.123" formControlName="payroll_no" />
+          @if (payrollForm.controls['payroll_no']?.hasError('required')) {
+          <mat-error>Payroll no is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <button mat-button color="primary" matStepperPrevious>Previous</button>
+        <button mat-button color="primary" matStepperNext>Next</button>
+      </form>
+    </mat-step>
+  </ng-container>
+
+  <ng-container
+    *ngIf="formMode === 'add-payment' || formMode === 'edit-payment'"
+  >
+    <!--! payment step -->
+    <mat-step [stepControl]="orForm">
+      <form [formGroup]="orForm">
+        <ng-template matStepLabel>Payment</ng-template>
+        <!-- payment date -->
+        <mat-form-field class="w-full">
+          <mat-label>OR date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker4"
+            placeholder="MM/DD/YYYY"
+            formControlName="or_date"
+          />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker4"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker4></mat-datepicker>
+          @if (orForm.controls['or_date']?.hasError('required')) {
+          <mat-error
+            >Official receipt date is <strong>required</strong></mat-error
+          >
+          }
+        </mat-form-field>
+        <!-- payment no -->
+        <mat-form-field class="w-full">
+          <mat-label>OR no.</mat-label>
+          <input matInput placeholder="ex.123" formControlName="or_no" />
+          @if (orForm.controls['or_no']?.hasError('required')) {
+          <mat-error>Officialreceipt no is <strong>required</strong></mat-error>
+          }
+        </mat-form-field>
+        <button mat-button color="primary" matStepperPrevious>Previous</button>
+        <button mat-button color="primary" matStepperNext>Next</button>
+      </form>
+    </mat-step>
+  </ng-container>
+
+  <!--! Review and Confirm step -->
+  <mat-step>
+    <ng-template matStepLabel>Review and Confirm</ng-template>
+    <ng-template matStepContent>
+      <div class="flex flex-wrap gap-5">
+        <ng-container
+          *ngIf="formMode === 'add-dispatch' || formMode === 'edit-dispatch'"
+        >
+          <div>
+            <h3>Dispatch</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of dispatchFormControls">
+                {{ control.key }} :
+                <strong>
+                  {{
+                    control.key.includes("_date")
+                      ? (control.control?.value | date)
+                      : control.key.includes("cbm" || "drops" || "qty")
+                      ? (control.control?.value | number)
+                      : control.control?.value
+                  }}
+                </strong>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Unit</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of deliveryUnitFormControls">
+                {{ control.key }} :
+                <strong>{{
+                  control.key.includes("odo_")
+                    ? (control.control?.value | number)
+                    : control.control?.value
+                }}</strong>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3>Fuel</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of fuelFormControls">
+                {{ control.key }} :
+                <strong>{{
+                  control.key.includes("_date")
+                    ? (control.control?.value | date)
+                    : control.key.includes("_rate")
+                    ? (control.control?.value
+                      | currency : "PHP" : "symbol" : "1.2-2")
+                    : control.control?.value
+                }}</strong>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+
+        <ng-container
+          *ngIf="formMode === 'add-invoice' || formMode === 'edit-invoice'"
+        >
+          <div>
+            <h3>Invoice</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of invoiceFormControls">
+                {{ control.key }} :
+                <strong>{{
+                  control.key.includes("_date")
+                    ? (control.control?.value | date)
+                    : control.key.includes("_rate")
+                    ? (control.control?.value
+                      | currency : "PHP" : "symbol" : "1.2-2")
+                    : control.control?.value
+                }}</strong>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+
+        <ng-container
+          *ngIf="formMode === 'add-payroll' || formMode === 'edit-payroll'"
+        >
+          <div>
+            <h3>Payroll</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of payrollFormControls">
+                {{ control.key }} :
+                <strong>{{
+                  control.key.includes("_date")
+                    ? (control.control?.value | date)
+                    : control.control?.value
+                }}</strong>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+
+        <ng-container
+          *ngIf="formMode === 'add-payment' || formMode === 'edit-payment'"
+        >
+          <div>
+            <h3>Payment</h3>
+            <ul class="pb-5">
+              <li *ngFor="let control of orFormControls">
+                {{ control.key }} :
+                <strong>{{
+                  control.key.includes("_date")
+                    ? (control.control?.value | date)
+                    : control.control?.value
+                }}</strong>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+      </div>
+      <button mat-button color="primary" matStepperPrevious>Previous</button>
+      <button mat-button color="primary" (click)="onConfirm()">Confirm</button>
+    </ng-template>
+  </mat-step>
+
+  <!--! done step -->
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <ng-template matStepContent>
+      <a mat-button color="primary" routerLink="../table">
+        <mat-icon>arrow_back</mat-icon> Go back to table</a
+      >
+    </ng-template>
+  </mat-step>
+</mat-stepper>

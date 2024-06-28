@@ -26,17 +26,16 @@ export class InvoiceTableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<DispatchModel>;
-  dataSource: any;
+
+  dataSource = new InvoiceTableDataSource(
+    this.formsService,
+    this.dashboardService
+  );
 
   constructor(
     private formsService: FormsService,
     private dashboardService: DashboardService
-  ) {
-    this.dataSource = new InvoiceTableDataSource(
-      this.formsService,
-      this.dashboardService
-    );
-  }
+  ) {}
 
   displayedColumns = [
     'disp_date',

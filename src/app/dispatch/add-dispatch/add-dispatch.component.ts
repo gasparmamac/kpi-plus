@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DispatchFormComponent } from '../dispatch-form/dispatch-form.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { routes } from '../../app.routes';
+import { DispatchFormComponent } from '../../forms/dispatch-form/dispatch-form.component';
 
 @Component({
   selector: 'app-add-dispatch',
@@ -11,9 +9,6 @@ import { routes } from '../../app.routes';
   styleUrl: './add-dispatch.component.css',
 })
 export class AddDispatchComponent implements OnInit {
-  addDispatchForm!: FormGroup;
-  formMode = 'add';
-
-  constructor(private fb: FormBuilder) {}
+  formMode = 'add-dispatch';
   ngOnInit(): void {}
 }

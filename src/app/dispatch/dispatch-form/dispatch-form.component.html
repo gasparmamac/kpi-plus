@@ -1,4 +1,12 @@
-<ng-container *ngIf="formMode === 'add' || 'edit'">
+<ng-container
+  *ngIf="
+    formMode === 'add-dispatch' ||
+    'edit-invoice' ||
+    'edit-payroll' ||
+    'edit-payment' ||
+    'edit'
+  "
+>
   <mat-stepper #stepper [orientation]="(stepperOrientation | async)!" linear>
     <!--! dispatch step -->
     <mat-step [stepControl]="dispatchForm">
