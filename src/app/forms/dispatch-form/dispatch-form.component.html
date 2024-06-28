@@ -20,7 +20,7 @@
             [for]="picker"
           ></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          @if (dispatchForm.controls['disp_date']?.hasError('required')) {
+          @if (dispatchForm.controls['disp_date'].hasError('required')) {
           <mat-error>Dispatch date is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -32,7 +32,7 @@
             placeholder="ex.0158956"
             formControlName="disp_slip"
           />
-          @if (dispatchForm.controls['disp_slip']?.hasError('required')) {
+          @if (dispatchForm.controls['disp_slip'].hasError('required')) {
           <mat-error>Dispatch slip is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -46,7 +46,7 @@
             }}</mat-option>
             }
           </mat-select>
-          @if (dispatchForm.controls['route']?.hasError('required')) {
+          @if (dispatchForm.controls['route'].hasError('required')) {
           <mat-error>Route is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -59,7 +59,7 @@
             placeholder="ex. Panabo, Cagayan etc."
             formControlName="odz_route"
           />
-          @if (dispatchForm.controls['odz_route']?.hasError('required')) {
+          @if (dispatchForm.controls['odz_route'].hasError('required')) {
           <mat-error>ODZ Route is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -72,7 +72,7 @@
             placeholder="ex. Matina, Maa, Ecoland etc."
             formControlName="destination"
           />
-          @if (dispatchForm.controls['destination']?.hasError('required')) {
+          @if (dispatchForm.controls['destination'].hasError('required')) {
           <mat-error>Destination is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -85,7 +85,7 @@
             formControlName="cbm"
             placeholder="ex. 4.5"
           />
-          @if (dispatchForm.controls['cbm']?.hasError('required')) {
+          @if (dispatchForm.controls['cbm'].hasError('required')) {
           <mat-error>CBM is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -98,7 +98,7 @@
             formControlName="drops"
             placeholder="ex. 45"
           />
-          @if (dispatchForm.controls['drops']?.hasError('required')) {
+          @if (dispatchForm.controls['drops'].hasError('required')) {
           <mat-error>Drops is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -111,7 +111,7 @@
             formControlName="qty"
             placeholder="ex. 50"
           />
-          @if (dispatchForm.controls['qty']?.hasError('required')) {
+          @if (dispatchForm.controls['qty'].hasError('required')) {
           <mat-error>Quantity is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -132,7 +132,7 @@
             }}</mat-option>
             }
           </mat-select>
-          @if (deliveryUnitForm.controls['plate_no']?.hasError('required')) {
+          @if (deliveryUnitForm.controls['plate_no'].hasError('required')) {
           <mat-error>Plate no is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -142,7 +142,7 @@
           <mat-label>Backup plate no</mat-label>
           <input type="text" matInput formControlName="backup_plate_no" />
           @if
-          (deliveryUnitForm.controls['backup_plate_no']?.hasError('required')) {
+          (deliveryUnitForm.controls['backup_plate_no'].hasError('required')) {
           <mat-error>Backup plate no is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -157,7 +157,7 @@
             }}</mat-option>
             }
           </mat-select>
-          @if (deliveryUnitForm.controls['driver']?.hasError('required')) {
+          @if (deliveryUnitForm.controls['driver'].hasError('required')) {
           <mat-error>Driver is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -170,7 +170,7 @@
             placeholder="ex. Juan Pablo"
             formControlName="extra_driver"
           />
-          @if (deliveryUnitForm.controls['backup_driver']?.hasError('required'))
+          @if (deliveryUnitForm.controls['backup_driver'].hasError('required'))
           {
           <mat-error>Backup driver is <strong>required</strong></mat-error>
           }
@@ -186,7 +186,7 @@
             }}</mat-option>
             }
           </mat-select>
-          @if (deliveryUnitForm.controls['helper']?.hasError('required')) {
+          @if (deliveryUnitForm.controls['helper'].hasError('required')) {
           <mat-error>Helper is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -199,8 +199,7 @@
             placeholder="ex. Juan Pablo"
             formControlName="extra_helper"
           />
-          @if (deliveryUnitForm.controls['extra_helper']?.hasError('required'))
-          {
+          @if (deliveryUnitForm.controls['extra_helper'].hasError('required')) {
           <mat-error>Extra helper is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -214,7 +213,7 @@
             formControlName="odo_start"
             placeholder="ex. 50100"
           />
-          @if (deliveryUnitForm.controls['odo_start']?.hasError('required')) {
+          @if (deliveryUnitForm.controls['odo_start'].hasError('required')) {
           <mat-error>Odo start is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -227,7 +226,7 @@
             formControlName="odo_end"
             placeholder="ex. 50150"
           />
-          @if (deliveryUnitForm.controls['odo_end']?.hasError('required')) {
+          @if (deliveryUnitForm.controls['odo_end'].hasError('required')) {
           <mat-error>Odo end is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -257,7 +256,7 @@
               [for]="picker5"
             ></mat-datepicker-toggle>
             <mat-datepicker #picker5></mat-datepicker>
-            @if (fuelForm.controls['fuel_date']?.hasError('required')) {
+            @if (fuelForm.controls['fuel_date'].hasError('required')) {
             <mat-error>Fuel date is <strong>required</strong></mat-error>
             }
           </mat-form-field>
@@ -269,7 +268,7 @@
               placeholder="ex.0158956"
               formControlName="fuel_or"
             />
-            @if (fuelForm.controls['fuel_or']?.hasError('required')) {
+            @if (fuelForm.controls['fuel_or'].hasError('required')) {
             <mat-error>Fuel O.R. is <strong>required</strong></mat-error>
             }
           </mat-form-field>
@@ -281,7 +280,7 @@
               placeholder="ex. diesel, break fluid"
               formControlName="fuel_item"
             />
-            @if (fuelForm.controls['fuel_item']?.hasError('required')) {
+            @if (fuelForm.controls['fuel_item'].hasError('required')) {
             <mat-error>Fuel item is <strong>required</strong></mat-error>
             }
           </mat-form-field>
@@ -294,7 +293,7 @@
               formControlName="fuel_amt"
               placeholder="ex. 1,234.5"
             />
-            @if (invoiceForm.controls['fuel']?.hasError('required')) {
+            @if (fuelForm.controls['fuel_amt'].hasError('required')) {
             <mat-error>Fuel amount is <strong>required</strong></mat-error>
             }
           </mat-form-field>
@@ -322,7 +321,7 @@
             }}</mat-option>
             }
           </mat-select>
-          @if (invoiceForm.controls['wd_type']?.hasError('required')) {
+          @if (invoiceForm.controls['wd_type'].hasError('required')) {
           <mat-error>Workday type is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -335,7 +334,7 @@
             formControlName="disp_rate"
             placeholder="ex. 2500.50"
           />
-          @if (invoiceForm.controls['disp_rate']?.hasError('required')) {
+          @if (invoiceForm.controls['disp_rate'].hasError('required')) {
           <mat-error>Dispatch rate is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -353,7 +352,7 @@
             [for]="picker2"
           ></mat-datepicker-toggle>
           <mat-datepicker #picker2></mat-datepicker>
-          @if (invoiceForm.controls['inv_date']?.hasError('required')) {
+          @if (invoiceForm.controls['inv_date'].hasError('required')) {
           <mat-error>Invoice date is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -361,7 +360,7 @@
         <mat-form-field class="w-full">
           <mat-label>Invoice no.</mat-label>
           <input matInput placeholder="ex.0158956" formControlName="inv_no" />
-          @if (invoiceForm.controls['inv_no']?.hasError('required')) {
+          @if (invoiceForm.controls['inv_no'].hasError('required')) {
           <mat-error>Invoice number is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -392,7 +391,7 @@
             [for]="picker3"
           ></mat-datepicker-toggle>
           <mat-datepicker #picker3></mat-datepicker>
-          @if (payrollForm.controls['payroll_date']?.hasError('required')) {
+          @if (payrollForm.controls['payroll_date'].hasError('required')) {
           <mat-error>Payroll date is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -400,7 +399,7 @@
         <mat-form-field class="w-full">
           <mat-label>Payroll no.</mat-label>
           <input matInput placeholder="ex.123" formControlName="payroll_no" />
-          @if (payrollForm.controls['payroll_no']?.hasError('required')) {
+          @if (payrollForm.controls['payroll_no'].hasError('required')) {
           <mat-error>Payroll no is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -431,7 +430,7 @@
             [for]="picker4"
           ></mat-datepicker-toggle>
           <mat-datepicker #picker4></mat-datepicker>
-          @if (orForm.controls['or_date']?.hasError('required')) {
+          @if (orForm.controls['or_date'].hasError('required')) {
           <mat-error
             >Official receipt date is <strong>required</strong></mat-error
           >
@@ -441,7 +440,7 @@
         <mat-form-field class="w-full">
           <mat-label>OR no.</mat-label>
           <input matInput placeholder="ex.123" formControlName="or_no" />
-          @if (orForm.controls['or_no']?.hasError('required')) {
+          @if (orForm.controls['or_no'].hasError('required')) {
           <mat-error>Officialreceipt no is <strong>required</strong></mat-error>
           }
         </mat-form-field>
