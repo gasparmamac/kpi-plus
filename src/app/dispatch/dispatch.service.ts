@@ -55,15 +55,41 @@ export class DispatchService implements OnDestroy {
           );
         }),
         catchError(async (error) => {
+          this.loadingSubject.next(false);
           this.queryingSubject.next(false);
           this.openSnackBar(`Error occured! \n ${error}`, 'Dismiss');
         })
       )
       .subscribe(() => {
         this.loadingSubject.next(false);
+        this.queryingSubject.next(false);
         this.dispatchFormStepperCompleteSubject.next(true);
       });
     this.subscription.add(subs2);
+  }
+
+  deleteDispatchItem(id: string) {
+    const subs = this.firestoreService
+      .deleteDoc('dispatch', id)
+      .pipe(
+        tap(() => {
+          this.queryingSubject.next(false);
+          this.loadingSubject.next(true);
+          this.openSnackBar('Dispatch deleted successfully', 'Ok');
+        }),
+        catchError(async (error) => {
+          this.loadingSubject.next(false);
+          this.queryingSubject.next(false);
+          this.openSnackBar(`Error occured! \n ${error}`, 'Dismiss');
+        })
+      )
+      .subscribe(() => {
+        this.loadingSubject.next(false);
+        this.queryingSubject.next(false);
+        this.openSnackBar('Dispatch deleted successfully', 'Ok');
+      });
+
+    this.subscription.add(subs);
   }
 
   private openSnackBar(message: string, action: string) {

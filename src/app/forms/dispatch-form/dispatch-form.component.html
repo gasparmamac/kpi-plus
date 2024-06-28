@@ -237,6 +237,9 @@
     </mat-step>
     <!--! Fuel Step -->
     <mat-step [stepControl]="fuelForm">
+      <mat-checkbox [checked]="isChecked" (change)="onCheckboxChange($event)"
+        >No fuel receipt</mat-checkbox
+      >
       <form [formGroup]="fuelForm">
         <ng-template matStepLabel>Fuel</ng-template>
         <!-- fuel date -->
@@ -299,9 +302,6 @@
         <button mat-button color="primary" matStepperPrevious>Previous</button>
         <button mat-button color="primary" matStepperNext>Next</button>
       </form>
-      <mat-checkbox [checked]="isChecked" (change)="onCheckboxChange($event)"
-        >No fuel receipt</mat-checkbox
-      >
     </mat-step>
   </ng-container>
 

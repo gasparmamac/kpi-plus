@@ -88,92 +88,34 @@ export class FirestoreService {
     collectionName = 'dispatch',
     id: string,
     data: DispatchModel
-  ): Promise<void> {
+  ): Observable<void> {
     const documentReference = doc(this.firestore, `${collectionName}/${id}`);
-    return setDoc(documentReference, data, { merge: true });
+    return from(setDoc(documentReference, data, { merge: true }));
   }
 
   // Read a document by ID
   readADocById(
     collectionName = 'dispatch',
     id: string
-  ): Promise<DocumentSnapshot> {
+  ): Observable<DocumentSnapshot> {
     const documentReference = doc(this.firestore, `${collectionName}/${id}`);
-    return getDoc(documentReference);
-  }
-
-  readDocsByQuery(
-    filterValue = 'no_payroll',
-    collectionName = 'dispatch'
-  ): Promise<QuerySnapshot> {
-    let docs;
-    const collectionReference = collection(this.firestore, collectionName);
-
-    let collectionQuery;
-    switch (filterValue) {
-      case 'no_invoice':
-        collectionQuery = query(
-          collectionReference,
-          or(
-            where('inv_no', '==', null),
-            where('inv_no', '==', ''),
-            where('inv_date', '==', null),
-            where('inv_date', '==', '')
-          ),
-          orderBy('disp_date', 'desc'),
-          limit(100)
-        );
-        docs = getDocs(collectionQuery);
-        break;
-      case 'no_or':
-        collectionQuery = query(
-          collectionReference,
-          or(
-            where('or_no', '==', null),
-            where('or_no', '==', ''),
-            where('or_date', '==', null),
-            where('or_date', '==', '')
-          ),
-          orderBy('disp_date', 'desc'),
-          limit(100)
-        );
-        docs = getDocs(collectionQuery);
-        break;
-      case 'last100':
-        collectionQuery = query(
-          collectionReference,
-          orderBy('disp_date', 'desc'),
-          limit(100)
-        );
-        docs = getDocs(collectionQuery);
-        break;
-      default: //no_payroll
-        collectionQuery = query(
-          collectionReference,
-          or(
-            where('payroll_no', '==', null),
-            where('payroll_no', '==', ''),
-            where('payroll_date', '==', null),
-            where('payroll_date', '==', '')
-          ),
-          orderBy('disp_date', 'desc'),
-          limit(100)
-        );
-        docs = getDocs(collectionQuery);
-    }
-    return docs;
+    return from(getDoc(documentReference));
   }
 
   // Update a document by ID
-  updateDoc(collectionName = 'dispatch', id: string, data: any): Promise<void> {
+  updateDoc(
+    collectionName = 'dispatch',
+    id: string,
+    data: any
+  ): Observable<void> {
     const documentReference = doc(this.firestore, `${collectionName}/${id}`);
-    return updateDoc(documentReference, data);
+    return from(updateDoc(documentReference, data));
   }
 
   // Delete a document by ID
-  deleteDoc(collectionName = 'dispatch', id: string): Promise<void> {
+  deleteDoc(collectionName = 'dispatch', id: string): Observable<void> {
     const documentReference = doc(this.firestore, `${collectionName}/${id}`);
-    return deleteDoc(documentReference);
+    return from(deleteDoc(documentReference));
   }
 
   // invoice query
@@ -198,6 +140,7 @@ export class FirestoreService {
           console.log('item: ', item.id);
           return {
             ...item,
+            id: item.id,
             disp_date: item['disp_date']?.toDate(),
             inv_date: item['inv_date']?.toDate(),
             payroll_date: item['payroll_date']?.toDate(),
@@ -252,11 +195,12 @@ export class FirestoreService {
   private getDataStream(
     query: Query<DocumentData, DocumentData>
   ): Observable<DispatchModel[]> {
-    return collectionData(query).pipe(
+    return collectionData(query, { idField: 'id' }).pipe(
       map((data) =>
         data.map((item) => {
           return {
             ...item,
+            id: item.id,
             disp_date: item['disp_date']?.toDate(),
             inv_date: item['inv_date']?.toDate(),
             payroll_date: item['payroll_date']?.toDate(),
@@ -265,9 +209,9 @@ export class FirestoreService {
               item['plate_no'] !== 'BAC'
                 ? `${item['plate_no']}: ${item['backup_plate_no']}`
                 : item['plate_no'],
-            destination: `${item['route'].toUpperCase()}: ${item[
+            destination: `${item['route']?.toUpperCase()}: ${item[
               'destination'
-            ].toLowerCase()}`,
+            ]?.toLowerCase()}`,
           };
         })
       )
