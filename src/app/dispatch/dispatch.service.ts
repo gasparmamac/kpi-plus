@@ -3,6 +3,7 @@ import { DashboardService } from '../dashboard/dashboard.service';
 import { BehaviorSubject, Subscription, catchError, tap } from 'rxjs';
 import { DispatchModel, FirestoreService } from '../services/firestore.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -20,16 +21,14 @@ export class DispatchService implements OnDestroy {
   querying$ = this.queryingSubject.asObservable();
   loading$ = this.loadingSubject.asObservable();
 
-  dispatchFormStepperCompleteSubject = new BehaviorSubject<boolean>(false);
-  dispatchFormStepperComplete$ =
-    this.dispatchFormStepperCompleteSubject.asObservable();
-
   subscription = new Subscription();
 
   constructor(
     private dashboardService: DashboardService,
     private firestoreService: FirestoreService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     const subs1 = this.dashboardService.noPayrollItems$.subscribe((items) => {
       this.noPayrollItemsSubject.next(items);
@@ -46,6 +45,8 @@ export class DispatchService implements OnDestroy {
       .createDoc('dispatch', data)
       .pipe(
         tap((docRef: { id: string }) => {
+          this.router.navigate(['/menu/dispatch/table'], {});
+
           this.queryingSubject.next(false);
           this.loadingSubject.next(true);
 
@@ -63,7 +64,6 @@ export class DispatchService implements OnDestroy {
       .subscribe(() => {
         this.loadingSubject.next(false);
         this.queryingSubject.next(false);
-        this.dispatchFormStepperCompleteSubject.next(true);
       });
     this.subscription.add(subs2);
   }

@@ -452,7 +452,7 @@
   </ng-container>
 
   <!--! Review and Confirm step -->
-  <mat-step>
+  <mat-step [completed]="isCompleted$ | async">
     <ng-template matStepLabel>Review and Confirm</ng-template>
     <ng-template matStepContent>
       <div class="flex flex-wrap gap-5">
@@ -566,16 +566,6 @@
       </div>
       <button mat-button color="primary" matStepperPrevious>Previous</button>
       <button mat-button color="primary" (click)="onConfirm()">Confirm</button>
-    </ng-template>
-  </mat-step>
-
-  <!--! done step -->
-  <mat-step>
-    <ng-template matStepLabel>Done</ng-template>
-    <ng-template matStepContent>
-      <a mat-button color="primary" routerLink="../table">
-        <mat-icon>arrow_back</mat-icon> Go back to table</a
-      >
     </ng-template>
   </mat-step>
 </mat-stepper>

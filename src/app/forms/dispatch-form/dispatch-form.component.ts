@@ -20,8 +20,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
-import { DispatchModel } from '../../services/firestore.service';
-import { Observable, Subscription, map } from 'rxjs';
+import {
+  DispatchModel,
+  FirestoreService,
+} from '../../services/firestore.service';
+import { Observable, Subscription, map, merge } from 'rxjs';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -87,26 +90,18 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
 
   @ViewChild('stepper')
   private dispatchFormStepper!: MatStepper;
-  completed: unknown;
+  isCompleted$!: Observable<boolean>;
   isChecked = false;
 
   constructor(
     private fb: FormBuilder,
     private dispatchService: DispatchService,
     public breakpointObserver: BreakpointObserver,
+    private firestoreService: FirestoreService,
     readonly dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.dispatchService.dispatchFormStepperCompleteSubject.next(false);
-
-    const subs5 = this.dispatchService.dispatchFormStepperComplete$.subscribe(
-      (isCompleted) => {
-        if (isCompleted) this.dispatchFormStepper.next();
-      }
-    );
-    this.subscription.add(subs5);
-
     this.stepperOrientation = this.breakpointObserver
       .observe('(min-width:800px)')
       .pipe(map(({ matches }) => (matches ? 'horizontal' : 'vertical')));
@@ -207,7 +202,6 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
       ...this.payrollForm.value,
       ...this.orForm.value,
     };
-
     switch (this.formMode) {
       case 'add-dispatch':
         this.dispatchService.addDispatchItem(formValues);
