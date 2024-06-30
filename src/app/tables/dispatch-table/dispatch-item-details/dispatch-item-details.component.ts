@@ -15,6 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class DispatchItemDetailsComponent implements OnInit {
   @Input()
   element!: any;
+  formMode$!: any;
 
   constructor(
     private dispatchService: DispatchService,

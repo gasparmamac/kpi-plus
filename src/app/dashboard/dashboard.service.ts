@@ -35,14 +35,12 @@ export class DashboardService implements OnDestroy {
           const noInvNoOr = noOr.filter(
             (item) =>
               item.inv_date === null ||
-              item.inv_date === '' ||
               item.inv_no === null ||
               item.inv_no === ''
           );
           const noInvNoPayroll = noPayroll.filter(
             (item) =>
               item.inv_date === null ||
-              item.inv_date === '' ||
               item.inv_no === null ||
               item.inv_no === ''
           );

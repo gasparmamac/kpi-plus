@@ -5,7 +5,6 @@ import {
   DocumentSnapshot,
   Firestore,
   Query,
-  QuerySnapshot,
   Timestamp,
   addDoc,
   collection,
@@ -13,21 +12,19 @@ import {
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
-  limit,
   or,
-  orderBy,
   query,
   setDoc,
   updateDoc,
   where,
 } from '@angular/fire/firestore';
-import { Observable, catchError, from, map } from 'rxjs';
+import { Observable, from, map } from 'rxjs';
 
 // dispatch item data model
 export interface DispatchModel {
+  key: any;
   id?: string;
-  disp_date: Date | Timestamp;
+  disp_date: Date | Timestamp | null;
   disp_slip: string;
   route: string;
   odz_route: string | null;
@@ -43,24 +40,24 @@ export interface DispatchModel {
   extra_helper: string | null;
   odo_start: number;
   odo_end: number;
-  fuel_date: Date | Timestamp | null | string;
+  fuel_date: Date | Timestamp | null;
   fuel_or: string | null;
   fuel_amt: number | null;
   fuel_item: string | null;
   disp_encoder: string;
-  disp_encoded_date: Date | Timestamp;
+  disp_encoded_date: Date | Timestamp | null;
 
   wd_type: string | null;
   disp_rate: number | null;
-  inv_date: Date | Timestamp | null | string;
+  inv_date: Date | Timestamp | null;
   inv_no: string | null;
   inv_encoder: string;
-  inv_encoded_date: Date | Timestamp;
+  inv_encoded_date: Date | Timestamp | null;
 
   payroll_date: Date | Timestamp | null;
   payroll_no: string | null;
 
-  or_date: Timestamp | null | string;
+  or_date: Date | Timestamp | null;
   or_no: string | null;
 }
 
@@ -106,10 +103,10 @@ export class FirestoreService {
   updateDoc(
     collectionName = 'dispatch',
     id: string,
-    data: any
+    updatedFields: {}
   ): Observable<void> {
     const documentReference = doc(this.firestore, `${collectionName}/${id}`);
-    return from(updateDoc(documentReference, data));
+    return from(updateDoc(documentReference, updatedFields));
   }
 
   // Delete a document by ID
@@ -125,12 +122,7 @@ export class FirestoreService {
     const collectionRef = collection(firestore, collectionName);
     const noOrQueryBuild = query(
       collectionRef,
-      or(
-        where('or_date', '==', null),
-        where('or_no', '==', null),
-        where('or_date', '==', ''),
-        where('or_no', '==', '')
-      )
+      or(where('or_date', '==', null), where('or_no', '==', null))
     );
     return this.getDataStream(noOrQueryBuild);
   }
@@ -142,12 +134,7 @@ export class FirestoreService {
     const collectionRef = collection(firestore, collectionName);
     const noPayrollQueryBuild = query(
       collectionRef,
-      or(
-        where('payroll_date', '==', null),
-        where('payroll_no', '==', null),
-        where('payroll_date', '==', ''),
-        where('payroll_no', '==', '')
-      )
+      or(where('payroll_date', '==', null), where('payroll_no', '==', null))
     );
     return this.getDataStream(noPayrollQueryBuild);
   }
@@ -165,6 +152,7 @@ export class FirestoreService {
             inv_date: item['inv_date']?.toDate(),
             payroll_date: item['payroll_date']?.toDate(),
             or_date: item['or_date']?.toDate(),
+            fuel_date: item['fuel_date']?.toDate(),
           };
         })
       )

@@ -41,24 +41,24 @@ export class DispatchService implements OnDestroy {
   }
 
   addDispatchItem(data: DispatchModel) {
+    this.queryingSubject.next(true);
     const subs2 = this.firestoreService
       .createDoc('dispatch', data)
       .pipe(
         tap((docRef: { id: string }) => {
-          this.router.navigate(['/menu/dispatch/table'], {});
-
+          this.openSnackBar(
+            `Dispatch with id: "${docRef.id}" is added successfully!`,
+            'Ok'
+          );
           this.queryingSubject.next(false);
           this.loadingSubject.next(true);
 
-          this.openSnackBar(
-            `Dispatch with id: "${docRef.id}" is added SUCCESSFULLY!`,
-            'Ok'
-          );
+          this.router.navigate(['/menu/dispatch/table'], {});
         }),
         catchError(async (error) => {
+          this.openSnackBar(`Error occured! \n ${error}`, 'Dismiss');
           this.loadingSubject.next(false);
           this.queryingSubject.next(false);
-          this.openSnackBar(`Error occured! \n ${error}`, 'Dismiss');
         })
       )
       .subscribe(() => {
@@ -66,6 +66,46 @@ export class DispatchService implements OnDestroy {
         this.queryingSubject.next(false);
       });
     this.subscription.add(subs2);
+  }
+
+  updateDispatchItem(
+    id: string,
+    updatedFields: Partial<DispatchModel>,
+    fieldCount: number
+  ) {
+    console.log('updatedFieldCount: ', fieldCount);
+    if (fieldCount > 0) {
+      this.queryingSubject.next(true);
+      const subs = this.firestoreService
+        .updateDoc('dispatch', id, updatedFields)
+        .pipe(
+          tap(() => {
+            this.openSnackBar(
+              `Dispatch with id: "${id}" is updated successfully!`,
+              'Ok'
+            );
+            this.queryingSubject.next(false);
+            this.loadingSubject.next(true);
+
+            this.router.navigate(['/menu/dispatch/table'], {});
+          }),
+          catchError(async (error) => {
+            this.openSnackBar(`Error occured! \n ${error}`, 'Dismiss');
+            this.loadingSubject.next(false);
+            this.queryingSubject.next(false);
+          })
+        )
+        .subscribe(() => {
+          this.loadingSubject.next(false);
+          this.queryingSubject.next(false);
+        });
+      this.subscription.add(subs);
+    } else {
+      this.openSnackBar(`No changes detected. Update aborted.`, 'Ok');
+      this.queryingSubject.next(false);
+      this.loadingSubject.next(false);
+      this.router.navigate(['/menu/dispatch/table'], {});
+    }
   }
 
   deleteDispatchItem(id: string) {

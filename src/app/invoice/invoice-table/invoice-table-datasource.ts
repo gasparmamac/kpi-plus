@@ -130,9 +130,13 @@ export class InvoiceTableDataSource extends DataSource<DispatchModel> {
 
 /** Simple sort comparator for example ID/Name columns (for client-side sorting). */
 function compare(
-  a: Date | Timestamp,
-  b: Date | Timestamp,
+  a: Date | Timestamp | null,
+  b: Date | Timestamp | null,
   isAsc: boolean
 ): number {
-  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  if (a !== null && b !== null) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  } else {
+    return 0;
+  }
 }

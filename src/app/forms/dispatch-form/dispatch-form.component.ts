@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  inject,
-} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 import {
   ReactiveFormsModule,
@@ -18,13 +10,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatCardModule } from '@angular/material/card';
+
 import { CommonModule } from '@angular/common';
-import {
-  DispatchModel,
-  FirestoreService,
-} from '../../services/firestore.service';
-import { Observable, Subscription, map, merge } from 'rxjs';
+import { DispatchModel } from '../../services/firestore.service';
+import { Observable, Subscription, map, reduce } from 'rxjs';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -32,14 +21,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
-import {
-  MatDialog,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogModule,
-  MatDialogTitle,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FuelDialogComponent } from './fuel-dialog/fuel-dialog.component';
 import { DispatchService } from '../../dispatch/dispatch.service';
 import {
@@ -74,7 +56,7 @@ import { MatIconModule } from '@angular/material/icon';
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DispatchFormComponent implements OnInit, OnDestroy {
-  @Input() formMode = 'add-dispatch';
+  @Input() formMode = '';
   @Input() element!: DispatchModel | null;
 
   dispatchForm!: FormGroup;
@@ -97,26 +79,51 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private dispatchService: DispatchService,
     public breakpointObserver: BreakpointObserver,
-    private firestoreService: FirestoreService,
     readonly dialog: MatDialog
   ) {}
 
+  ngOnDestroy(): void {
+    if (this.subscription) this.subscription.unsubscribe();
+  }
+
   ngOnInit(): void {
+    console.log('form ngOnInit ');
+
     this.stepperOrientation = this.breakpointObserver
       .observe('(min-width:800px)')
       .pipe(map(({ matches }) => (matches ? 'horizontal' : 'vertical')));
 
+    this.initFormByMode(this.formMode);
+
+    this.onRouteValueChanges();
+    this.onPlateNoValueChanges();
+    this.onDriverValueChanges();
+    this.onHelperValueChanges();
+  }
+
+  private initFormByMode(formMode: string): void {
+    /**
+     * Initialize all controls with NULL
+     * Expose only the required form/s (adding, editing)
+     * Unexposed forms will have null values oo old values (if editing)
+     * All exposed forms will be required.
+     */
     this.dispatchForm = this.fb.group({
       disp_date: [null, Validators.required],
-      disp_slip: [null, Validators.required],
+      disp_slip: [
+        null,
+        [Validators.required, Validators.pattern('^[^\\s][\\s\\S]*$')],
+      ],
       route: [null, Validators.required],
       odz_route: null,
-      destination: [null, Validators.required],
-      cbm: [4.5, Validators.required],
-      drops: [null, Validators.required],
-      qty: [null, Validators.required],
+      destination: [
+        null,
+        [Validators.required, Validators.pattern('^[^\\s][\\s\\S]*$')],
+      ],
+      cbm: [4.5, [Validators.required]],
+      drops: [null, [Validators.required]],
+      qty: [null, [Validators.required]],
     });
-
     this.deliveryUnitForm = this.fb.group({
       plate_no: [null, Validators.required],
       backup_plate_no: null,
@@ -129,8 +136,14 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
     });
     this.fuelForm = this.fb.group({
       fuel_date: [null, Validators.required],
-      fuel_or: [null, Validators.required],
-      fuel_item: [null, Validators.required],
+      fuel_or: [
+        null,
+        [Validators.required, Validators.pattern('^[^\\s][\\s\\S]*$')],
+      ],
+      fuel_item: [
+        null,
+        [Validators.required, Validators.pattern('^[^\\s][\\s\\S]*$')],
+      ],
       fuel_amt: [null, Validators.required],
     });
     this.invoiceForm = this.fb.group({
@@ -148,10 +161,26 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
       or_no: null,
     });
 
-    this.onRouteValueChanges();
-    this.onPlateNoValueChanges();
-    this.onDriverValueChanges();
-    this.onHelperValueChanges();
+    switch (formMode) {
+      case 'edit-dispatch':
+        /**Update initialised forms above with the data from the passed element */
+        this.dispatchForm.patchValue({ ...this.element });
+        this.deliveryUnitForm.patchValue({ ...this.element });
+        this.fuelForm.patchValue({ ...this.element });
+        this.invoiceForm.patchValue({ ...this.element });
+        this.payrollForm.patchValue({ ...this.element });
+        this.orForm.patchValue({ ...this.element });
+        if (this.dispatchForm.get('route')?.value === 'ODZ')
+          this.onRouteValue('ODZ');
+        if (this.deliveryUnitForm.get('plate_no')?.value === 'BAC')
+          this.onPlateNoValue('BAC');
+        if (this.deliveryUnitForm.get('driver')?.value === 'EXD')
+          this.onDriverValue('EXD');
+        if (this.deliveryUnitForm.get('helper')?.value === 'EXH')
+          this.onHelperValue('EXH');
+
+        break;
+    }
   }
 
   wd_types = [
@@ -189,10 +218,6 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
     { name: 'BACKUP', abbreviation: 'BAC' },
   ];
 
-  ngOnDestroy(): void {
-    if (this.subscription) this.subscription.unsubscribe();
-  }
-
   onConfirm() {
     const formValues = {
       ...this.dispatchForm.value,
@@ -204,9 +229,48 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
     };
     switch (this.formMode) {
       case 'add-dispatch':
+        /**add formvalues, including all controls with null (unexposed) */
+        console.log('disp item for creation/adding: ', formValues);
         this.dispatchService.addDispatchItem(formValues);
-        this.dispatchService.queryingSubject.next(true);
+        break;
+
+      case 'edit-dispatch':
+        if (this.element && this.element.id) {
+          const oldVal = this.element;
+          const updatedVal = { ...formValues, id: this.element.id };
+          const updatedFields = this.updatedFields(oldVal, updatedVal);
+          const updatedFieldCount = Object.keys(updatedFields).length;
+          console.log('updatedFieldCount: ', Object.keys(updatedFields).length);
+
+          this.dispatchService.updateDispatchItem(
+            this.element.id,
+            updatedFields,
+            updatedFieldCount
+          );
+        } else {
+          console.error('No dispatch element or element-id to edit');
+        }
+        break;
     }
+  }
+
+  private updatedFields(
+    preEditedValues: DispatchModel,
+    formValues: DispatchModel
+  ): Partial<DispatchModel> {
+    let updateFields: Partial<DispatchModel> = {};
+
+    updateFields = Object.keys(preEditedValues).reduce<Partial<DispatchModel>>(
+      (acc, key) => {
+        const typedKey = key as keyof DispatchModel;
+        if (preEditedValues[typedKey] !== formValues[typedKey]) {
+          acc[typedKey] = formValues[typedKey];
+        }
+        return acc;
+      },
+      {} as Partial<DispatchModel>
+    );
+    return updateFields;
   }
 
   onCheckboxChange(event: MatCheckboxChange) {
@@ -233,9 +297,19 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
   private onNoFuelReceipt(isChecked: boolean): void {
     if (!isChecked) {
       this.fuelForm.get('fuel_date')?.setValidators(Validators.required);
-      this.fuelForm.get('fuel_or')?.setValidators(Validators.required);
-      this.fuelForm.get('fuel_item')?.setValidators(Validators.required);
-      this.fuelForm.get('fuel_amt')?.setValidators(Validators.required);
+      this.fuelForm
+        .get('fuel_or')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern('^[^\\s][\\s\\S]*$'),
+        ]);
+      this.fuelForm
+        .get('fuel_item')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern('^[^\\s][\\s\\S]*$'),
+        ]);
+      this.fuelForm.get('fuel_amt')?.setValidators([Validators.required]);
     } else {
       this.fuelForm.reset();
       this.fuelForm.get('fuel_date')?.clearValidators();
@@ -250,61 +324,85 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
   }
 
   private onRouteValueChanges(): void {
-    const subs1 = this.dispatchForm
+    const subs = this.dispatchForm
       .get('route')
       ?.valueChanges.subscribe((routeVal) => {
-        const odzRouteControl = this.dispatchForm.get('odz_route');
-        if (routeVal === 'ODZ') {
-          odzRouteControl?.setValidators([Validators.required]);
-        } else {
-          odzRouteControl?.clearValidators();
-        }
-        odzRouteControl?.updateValueAndValidity();
+        this.onRouteValue(routeVal);
       });
-    this.subscription.add(subs1);
+    this.subscription.add(subs);
   }
   private onPlateNoValueChanges(): void {
-    const subs2 = this.deliveryUnitForm
+    const subs = this.deliveryUnitForm
       .get('plate_no')
       ?.valueChanges.subscribe((plateNoVal) => {
-        const backupPlateNoControl =
-          this.deliveryUnitForm.get('backup_plate_no');
-        if (plateNoVal === 'BAC') {
-          backupPlateNoControl?.setValidators([Validators.required]);
-        } else {
-          backupPlateNoControl?.clearValidators();
-        }
-        backupPlateNoControl?.updateValueAndValidity();
+        this.onPlateNoValue(plateNoVal);
       });
-    this.subscription.add(subs2);
+    this.subscription.add(subs);
   }
   private onDriverValueChanges(): void {
-    const subs3 = this.deliveryUnitForm
+    const subs = this.deliveryUnitForm
       .get('driver')
       ?.valueChanges.subscribe((driverVal) => {
-        const extraDriverControl = this.deliveryUnitForm.get('extra_driver');
-        if (driverVal === 'EXD') {
-          extraDriverControl?.setValidators([Validators.required]);
-        } else {
-          extraDriverControl?.clearValidators();
-        }
-        extraDriverControl?.updateValueAndValidity();
+        this.onDriverValue(driverVal);
       });
-    this.subscription.add(subs3);
+    this.subscription.add(subs);
   }
   private onHelperValueChanges(): void {
     const subs3 = this.deliveryUnitForm
       .get('helper')
       ?.valueChanges.subscribe((helperVal) => {
-        const extrahelperControl = this.deliveryUnitForm.get('extra_helper');
-        if (helperVal === 'EXH') {
-          extrahelperControl?.setValidators([Validators.required]);
-        } else {
-          extrahelperControl?.clearValidators();
-        }
-        extrahelperControl?.updateValueAndValidity();
+        this.onHelperValue(helperVal);
       });
     this.subscription.add(subs3);
+  }
+
+  private onRouteValue(routeVal: string): void {
+    const odzRouteControl = this.dispatchForm.get('odz_route');
+    if (routeVal === 'ODZ') {
+      odzRouteControl?.setValidators([
+        Validators.required,
+        Validators.pattern('^[^\\s][\\s\\S]*$'),
+      ]);
+    } else {
+      odzRouteControl?.clearValidators();
+    }
+    odzRouteControl?.updateValueAndValidity();
+  }
+  private onPlateNoValue(plateNoVal: string): void {
+    const backupPlateNoControl = this.deliveryUnitForm.get('backup_plate_no');
+    if (plateNoVal === 'BAC') {
+      backupPlateNoControl?.setValidators([
+        Validators.required,
+        Validators.pattern('^[^\\s][\\s\\S]*$'),
+      ]);
+    } else {
+      backupPlateNoControl?.clearValidators();
+    }
+    backupPlateNoControl?.updateValueAndValidity();
+  }
+  private onDriverValue(driverVal: string): void {
+    const extraDriverControl = this.deliveryUnitForm.get('extra_driver');
+    if (driverVal === 'EXD') {
+      extraDriverControl?.setValidators([
+        Validators.required,
+        Validators.pattern('^[^\\s][\\s\\S]*$'),
+      ]);
+    } else {
+      extraDriverControl?.clearValidators();
+    }
+    extraDriverControl?.updateValueAndValidity();
+  }
+  private onHelperValue(helperVal: string): void {
+    const extrahelperControl = this.deliveryUnitForm.get('extra_helper');
+    if (helperVal === 'EXH') {
+      extrahelperControl?.setValidators([
+        Validators.required,
+        Validators.pattern('^[^\\s][\\s\\S]*$'),
+      ]);
+    } else {
+      extrahelperControl?.clearValidators();
+    }
+    extrahelperControl?.updateValueAndValidity();
   }
 
   get dispatchFormControls() {
@@ -344,3 +442,6 @@ export class DispatchFormComponent implements OnInit, OnDestroy {
     }));
   }
 }
+/**
+ * TODO4. Review dashboard service versus separate qeury for dispatch.
+ */

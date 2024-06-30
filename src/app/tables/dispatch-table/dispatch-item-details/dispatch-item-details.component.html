@@ -59,50 +59,23 @@
         </li>
       </ul>
     </div>
-    <!-- <div class="">
-      <h3>Invoice</h3>
+    <div class="">
+      <h3>Fuel</h3>
       <ul>
         <li>
-          wd_type : <strong>{{ element.wd_type }}</strong>
+          plate_no : <strong>{{ element.fuel_date | date }}</strong>
         </li>
         <li>
-          disp_rate :
-          <strong>{{
-            element.disp_rate | currency : "PHP" : "symbol" : "1.2"
-          }}</strong>
+          plate_no : <strong>{{ element.fuel_or }}</strong>
         </li>
         <li>
-          inv_date : <strong>{{ element.inv_date | date }}</strong>
+          plate_no : <strong>{{ element.fuel_item }}</strong>
         </li>
         <li>
-          inv_no : <strong>{{ element.inv_no }}</strong>
+          plate_no : <strong>{{ element.fuel_amount }}</strong>
         </li>
       </ul>
-    </div> -->
-
-    <!-- <div class="">
-      <h3>Payroll</h3>
-      <ul>
-        <li>
-          payroll_date : <strong>{{ element.payroll_date | date }}</strong>
-        </li>
-        <li>
-          payroll_no : <strong>{{ element.payroll_no }}</strong>
-        </li>
-      </ul>
-    </div> -->
-
-    <!-- <div class="">
-      <h3>Payment</h3>
-      <ul>
-        <li>
-          or_date : <strong>{{ element.or_date | date }}</strong>
-        </li>
-        <li>
-          or_no : <strong>{{ element.or_no }}</strong>
-        </li>
-      </ul>
-    </div> -->
+    </div>
   </div>
   <div class="flex gap-5">
     <button mat-button color="primary" (click)="onEdit(element)">Edit</button>

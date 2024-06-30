@@ -34,6 +34,10 @@
           />
           @if (dispatchForm.controls['disp_slip'].hasError('required')) {
           <mat-error>Dispatch slip is <strong>required</strong></mat-error>
+          } @if (dispatchForm.controls['disp_slip'].hasError('pattern')) {
+          <mat-error
+            >Dispatch slip cannot begin with <strong>space</strong></mat-error
+          >
           }
         </mat-form-field>
         <!-- route -->
@@ -61,6 +65,10 @@
           />
           @if (dispatchForm.controls['odz_route'].hasError('required')) {
           <mat-error>ODZ Route is <strong>required</strong></mat-error>
+          } @if (dispatchForm.controls['odz_route'].hasError('pattern')) {
+          <mat-error
+            >ODZ Route cannot begin with <strong>space</strong></mat-error
+          >
           }
         </mat-form-field>
         }
@@ -74,6 +82,10 @@
           />
           @if (dispatchForm.controls['destination'].hasError('required')) {
           <mat-error>Destination is <strong>required</strong></mat-error>
+          } @if (dispatchForm.controls['destination'].hasError('pattern')) {
+          <mat-error
+            >Destination cannot begin with <strong>space</strong></mat-error
+          >
           }
         </mat-form-field>
         <!-- cbm -->
@@ -144,6 +156,11 @@
           @if
           (deliveryUnitForm.controls['backup_plate_no'].hasError('required')) {
           <mat-error>Backup plate no is <strong>required</strong></mat-error>
+          } @if
+          (deliveryUnitForm.controls['backup_plate_no'].hasError('pattern')) {
+          <mat-error
+            >Backup plate no cannot begin with <strong>space</strong></mat-error
+          >
           }
         </mat-form-field>
         }
@@ -172,6 +189,11 @@
           />
           @if (deliveryUnitForm.controls['extra_driver'].hasError('required')) {
           <mat-error>Backup driver is <strong>required</strong></mat-error>
+          } @if (deliveryUnitForm.controls['extra_driver'].hasError('pattern'))
+          {
+          <mat-error
+            >Backup driver cannot begin with <strong>space</strong></mat-error
+          >
           }
         </mat-form-field>
         }
@@ -200,6 +222,11 @@
           />
           @if (deliveryUnitForm.controls['extra_helper'].hasError('required')) {
           <mat-error>Extra helper is <strong>required</strong></mat-error>
+          } @if (deliveryUnitForm.controls['extra_helper'].hasError('pattern'))
+          {
+          <mat-error
+            >Extra helper cannot begin with <strong>space</strong></mat-error
+          >
           }
         </mat-form-field>
         }
@@ -269,6 +296,10 @@
             />
             @if (fuelForm.controls['fuel_or'].hasError('required')) {
             <mat-error>Fuel O.R. is <strong>required</strong></mat-error>
+            } @if (fuelForm.controls['fuel_or'].hasError('pattern')) {
+            <mat-error
+              >Fuel O.R. cannot begin with <strong>space</strong></mat-error
+            >
             }
           </mat-form-field>
           <!-- fuel item -->
@@ -281,6 +312,10 @@
             />
             @if (fuelForm.controls['fuel_item'].hasError('required')) {
             <mat-error>Fuel item is <strong>required</strong></mat-error>
+            } @if (fuelForm.controls['fuel_item'].hasError('pattern')) {
+            <mat-error
+              >Fuel item cannot begin with <strong>space</strong></mat-error
+            >
             }
           </mat-form-field>
           <!-- fuel amount -->
