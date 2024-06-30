@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DispatchFormComponent } from '../dispatch-form/dispatch-form.component';
+import { DispatchFormComponent } from '../../forms/dispatch-form/dispatch-form.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DispatchModel } from '../../services/firestore.service';
 
@@ -20,5 +20,7 @@ export class EditDispatchComponent implements OnInit {
     this.element = navigation?.extras.state?.['element'];
     this.elementId = this.activatedRoute.snapshot.paramMap.get('id');
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('element: ', this.element);
+  }
 }

@@ -51,7 +51,7 @@
           }
         </mat-form-field>
         <!-- odz route -->
-        @if(dispatchForm.controls['route'].value == 'ODZ'){
+        @if(dispatchForm.controls['route'].value === 'ODZ'){
         <mat-form-field class="w-full">
           <mat-label>ODZ route</mat-label>
           <input
@@ -137,7 +137,7 @@
           }
         </mat-form-field>
         <!-- backup plate no -->
-        @if(deliveryUnitForm.controls['plate_no'].value == 'BAC'){
+        @if(deliveryUnitForm.controls['plate_no'].value === 'BAC'){
         <mat-form-field class="w-full">
           <mat-label>Backup plate no</mat-label>
           <input type="text" matInput formControlName="backup_plate_no" />
@@ -162,7 +162,7 @@
           }
         </mat-form-field>
         <!-- extra driver  -->
-        @if(deliveryUnitForm.controls['driver'].value == 'EXD'){
+        @if(deliveryUnitForm.controls['driver'].value === 'EXD'){
         <mat-form-field class="w-full">
           <mat-label>Extra driver</mat-label>
           <input
@@ -170,8 +170,7 @@
             placeholder="ex. Juan Pablo"
             formControlName="extra_driver"
           />
-          @if (deliveryUnitForm.controls['backup_driver'].hasError('required'))
-          {
+          @if (deliveryUnitForm.controls['extra_driver'].hasError('required')) {
           <mat-error>Backup driver is <strong>required</strong></mat-error>
           }
         </mat-form-field>
@@ -191,7 +190,7 @@
           }
         </mat-form-field>
         <!-- extra helper -->
-        @if(deliveryUnitForm.controls['helper'].value == 'EXH'){
+        @if(deliveryUnitForm.controls['helper'].value === 'EXH'){
         <mat-form-field class="w-full">
           <mat-label>Extra helper</mat-label>
           <input

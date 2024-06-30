@@ -93,6 +93,6 @@ export class DispatchService implements OnDestroy {
   }
 
   private openSnackBar(message: string, action: string) {
-    this.snackbar.open(message, action, { duration: 5000 });
+    this.snackbar.open(message, action, { duration: 10000 });
   }
 }

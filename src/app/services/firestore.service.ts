@@ -118,46 +118,6 @@ export class FirestoreService {
     return from(deleteDoc(documentReference));
   }
 
-  // invoice query
-  loadDispatchForInvoice() {
-    const collectionName = 'dispatch';
-    const firestore = this.firestore;
-    const collectionRef = collection(firestore, collectionName);
-    const noInvoiceItemsQuery = query(
-      collectionRef,
-      or(
-        where('inv_date', '==', null),
-        where('inv_no', '==', null),
-        where('inv_date', '==', ''),
-        where('inv_no', '==', '')
-      )
-    );
-    this.dispatchForInvoiceItems$ = collectionData(noInvoiceItemsQuery, {
-      idField: 'id',
-    }).pipe(
-      map((data) =>
-        data.map((item) => {
-          console.log('item: ', item.id);
-          return {
-            ...item,
-            id: item.id,
-            disp_date: item['disp_date']?.toDate(),
-            inv_date: item['inv_date']?.toDate(),
-            payroll_date: item['payroll_date']?.toDate(),
-            or_date: item['or_date']?.toDate(),
-            plate_no:
-              item['plate_no'] === 'BAC'
-                ? `${item['plate_no']}: ${item['backup_plate_no']}`
-                : item['plate_no'],
-            destination: `${item['route'].toUpperCase()}: ${item[
-              'destination'
-            ].toLowerCase()}`,
-          };
-        })
-      )
-    ) as Observable<DispatchModel[]>;
-  }
-
   // for dashboard - no O.R.
   noOrQuery(): Observable<DispatchModel[]> {
     const collectionName = 'dispatch';
@@ -205,13 +165,6 @@ export class FirestoreService {
             inv_date: item['inv_date']?.toDate(),
             payroll_date: item['payroll_date']?.toDate(),
             or_date: item['or_date']?.toDate(),
-            plate_no:
-              item['plate_no'] !== 'BAC'
-                ? `${item['plate_no']}: ${item['backup_plate_no']}`
-                : item['plate_no'],
-            destination: `${item['route']?.toUpperCase()}: ${item[
-              'destination'
-            ]?.toLowerCase()}`,
           };
         })
       )

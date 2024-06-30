@@ -1,10 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { DispatchTableComponent } from '../../tables/dispatch-table/dispatch-table.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { DispatchService } from '../dispatch.service';
-import { Subscription } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-dispatch-list',
